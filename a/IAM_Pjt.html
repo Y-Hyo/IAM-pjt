@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>직접 가보고 선정한 나의 맛집 - 여러분도 가보세요</title>
+    
+    <!-- Leaflet.js Map Library CSS (오픈소스 지도 라이브러리) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    
+    <style>
+        /* --- 1. CSS Reset & Variables --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* 부드러운 스크롤 인터랙션 활성화 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-color: #FBF9F6; /* 매우 부드럽고 따뜻한 미색 파스텔 */
+            --card-bg: #FFFFFF;
+            --text-main: #1D1D1F; /* 애플 특유의 진한 차콜 */
+            --text-sub: #515154;  /* 가독성을 개선한 서브 텍스트 */
+            --accent-pastel: #FDF0EC; /* 살구빛이 도는 따뜻한 파스텔 */
+            --accent-text: #E76F51;    /* 부드러운 오렌지 브라운 */
+            --accent-blue-pastel: #EEF4F8; /* 서브 카테고리용 파스텔 블루 */
+            --accent-blue-text: #4A90E2;
+            --naver-green: #2DB400; /* 네이버 시그니처 그린 */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            letter-spacing: -0.3px;
+        }
+
+        /* --- 2. Navigation Header --- */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: rgba(251, 249, 246, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--accent-text);
+        }
+
+        /* 헤더 우측 메뉴 스타일 */
+        .nav-menu {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu li {
+            position: relative; /* 드롭다운 정렬의 기준 */
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: color 0.25s, transform 0.2s;
+            display: inline-block;
+            padding: 4px 0;
+        }
+
+        .nav-menu a:hover {
+            color: var(--accent-text);
+            transform: translateY(-1px);
+        }
+
+        /* --- 3. iOS Style Dropdown Menu (새로 추가됨) --- */
+        .dropdown-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            min-width: 140px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 8px 0;
+            z-index: 1010;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            transform: translateY(8px);
+            transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
+            pointer-events: none;
+        }
+
+        /* 마우스 호버 시 자연스럽게 주르르 띄워지는 애니메이션 인터랙션 */
+        .nav-menu li.dropdown:hover .dropdown-content {
+            visibility: visible;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .dropdown-content a {
+            color: var(--text-sub);
+            padding: 8px 18px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.2s, color 0.2s;
+            text-align: right;
+            border-radius: 0;
+            transform: none !important; /* 개별 링크의 호버 상승 무효화 */
+        }
+
+        .dropdown-content a:hover {
+            background-color: var(--accent-pastel);
+            color: var(--accent-text);
+        }
+
+        /* --- 4. Hero Section (앰비언트 블러 아트워크 배경 적용) --- */
+        .hero {
+            position: relative;
+            min-height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 120px 24px 60px 24px;
+            margin-top: 60px;
+            overflow: hidden; /* 블러 영역이 빠져나가지 않도록 처리 */
+        }
+
+        /* 흐려진 음식 이미지가 합성되어 움직이는 배경 랩 */
+        .hero-bg-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 4종류의 풍성한 음식 색감이 은은하게 섞이는 이중 블러 그리드 */
+        .hero-bg-images {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            top: -5%;
+            left: -5%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            filter: blur(45px) saturate(1.4); /* 이미지를 극도로 흐리고 풍부하게 */
+            opacity: 0.35; /* 은은하게 뒤편에 비치도록 투명도 조절 */
+        }
+
+        .hero-bg-images img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 파스텔톤 테마와 자연스럽게 섞이도록 레이어 마스크 적용 */
+        .hero-bg-overlay {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(251, 249, 246, 0.2) 0%, var(--bg-color) 95%);
+            z-index: 2;
+        }
+
+        /* 타이틀 정보 콘텐츠 레이어 */
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1.8px;
+            line-height: 1.25;
+            color: var(--text-main);
+            animation: fadeInUp 0.8s ease-out;
+            text-shadow: 0 2px 20px rgba(251, 249, 246, 0.8); /* 뒷배경과의 극강의 가독성 확보 */
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-sub);
+            font-weight: 500;
+            animation: fadeInUp 1s ease-out;
+            text-shadow: 0 2px 10px rgba(251, 249, 246, 0.8);
+        }
+
+        /* --- 5. Map Section --- */
+        .map-section {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 24px 40px 24px;
+            animation: fadeInUp 1.1s ease-out;
+            /* 네비게이션 헤더에 가려지지 않도록 오프셋 지정 */
+            scroll-margin-top: 88px;
+        }
+
+        .map-wrapper {
+            background: var(--card-bg);
+            border-radius: 32px;
+            padding: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        #map {
+            width: 100%;
+            height: 450px;
+            border-radius: 24px;
+            z-index: 10;
+        }
+
+        /* Custom Map Marker Style */
+        .custom-marker {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--card-bg);
+            border: 2px solid var(--accent-text);
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .custom-marker:hover {
+            transform: scale(1.15);
+            background-color: var(--accent-pastel);
+        }
+
+        /* Leaflet Popup Custom style to match Apple design */
+        .leaflet-popup-content-wrapper {
+            border-radius: 16px !important;
+            padding: 6px !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+            font-family: -apple-system, sans-serif !important;
+        }
+        .leaflet-popup-content h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: var(--text-main);
+        }
+        .leaflet-popup-content p {
+            font-size: 0.8rem;
+            color: #515154;
+            margin-bottom: 8px;
+        }
+        .popup-btn {
+            display: inline-block;
+            background-color: var(--accent-text);
+            color: #fff;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* --- 6. Main Content Grid (Gu Grouping) --- */
+        .main-container {
+            max-width: 1024px;
+            margin: 0 auto;
+            padding: 0 24px 120px 24px;
+            /* 네비게이션 헤더에 가려지지 않도록 오프셋 지정 */
+            scroll-margin-top: 88px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+            letter-spacing: -0.5px;
+            position: relative;
+        }
+
+        /* 구별 그룹 섹션 */
+        .gu-group-section {
+            margin-bottom: 48px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .gu-group-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gu-badge {
+            background-color: var(--accent-pastel);
+            color: var(--accent-text);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        /* --- 7. Beautiful Cards --- */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+            position: relative;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 36px rgba(180, 160, 150, 0.15);
+        }
+
+        .card-img-box {
+            width: 100%;
+            height: 220px;
+            background-color: #EFEFEF;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card:hover .card-img-box img {
+            transform: scale(1.06);
+        }
+
+        .card-info {
+            padding: 24px;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .card-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: var(--accent-pastel);
+            color: var(--accent-text);
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-tag.secondary {
+            background-color: var(--accent-blue-pastel);
+            color: var(--accent-blue-text);
+        }
+
+        .card-title {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: #515154;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* --- 8. iOS Style Bottom Slide-Up Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 640px;
+            background-color: var(--card-bg);
+            border-top-left-radius: 32px;
+            border-top-right-radius: 32px;
+            padding: 40px 32px;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        /* 드래그 핸들처럼 보이는 미니멀 바 */
+        .modal-handle {
+            width: 36px;
+            height: 5px;
+            background-color: #E5E5EA;
+            border-radius: 3px;
+            margin: -20px auto 24px auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .modal-close {
+            background-color: #F2F2F7;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: #86868B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: #E5E5EA;
+        }
+
+        .modal-body {
+            font-size: 1.05rem;
+            color: #48484A;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .modal-meta {
+            background-color: #FAFAFC;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+            border: 1px solid #F2F2F7;
+        }
+
+        .modal-meta-item {
+            margin-bottom: 8px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-meta-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .meta-label {
+            font-weight: 600;
+            color: var(--accent-text);
+            min-width: 64px;
+        }
+
+        /* 실제 네이버 지도 길찾기 버튼 */
+        .naver-map-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 16px;
+            background-color: var(--naver-green);
+            color: #FFFFFF;
+            border-radius: 18px;
+            text-decoration: none;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            transition: background-color 0.2s, transform 0.2s;
+            box-shadow: 0 4px 16px rgba(45, 180, 0, 0.15);
+        }
+
+        .naver-map-btn:hover {
+            background-color: #249000;
+            transform: translateY(-2px);
+        }
+
+        .naver-map-btn:active {
+            transform: translateY(0);
+        }
+
+        .naver-logo-icon {
+            font-weight: 900;
+            background-color: #FFFFFF;
+            color: var(--naver-green);
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        /* 가상 지도 패널 */
+        .modal-map-container {
+            width: 100%;
+            height: 140px;
+            background-color: #F5F7F8; 
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed #D1D1D6;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .modal-map-container:hover {
+            background-color: #EBF4F8;
+            border-color: var(--accent-blue-text);
+        }
+
+        .map-icon {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .map-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .map-sub {
+            font-size: 0.8rem;
+            color: #86868B;
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 반응형 디자인 최적화 */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.2rem; }
+            .modal-content { padding: 32px 20px; }
+            #map { height: 350px; }
+            
+            /* 모달 및 헤더의 모바일 대응 */
+            .nav-menu {
+                gap: 12px;
+            }
+            .nav-menu a {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 상단 헤더 -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">Local<span>Gourmet</span></div>
+            <!-- 우측 이동 네비게이션 메뉴 및 드롭다운 구현 -->
+            <ul class="nav-menu">
+                <li><a href="#hero-section">홈</a></li>
+                <li><a href="#map-section">지도</a></li>
+                <li class="dropdown">
+                    <a href="#list-section">맛집 목록</a>
+                    <div class="dropdown-content" id="gu-dropdown">
+                        <!-- 자바스크립트로 구별 목록이 동적 렌더링됩니다 -->
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- 히어로 섹션 (감성 블러 백그라운드 적용) -->
+    <section class="hero" id="hero-section">
+        <!-- 타이틀 뒷편의 은은하고 흐려진 음식 아트 백그라운드 -->
+        <div class="hero-bg-wrapper">
+            <div class="hero-bg-images">
+                <!-- 큐레이션된 풍성한 음식 사진 4장 배치 -->
+                <img src="https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=400&q=80" alt="돈카츠">
+                <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=400&q=80" alt="스시">
+                <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=400&q=80" alt="파스타">
+                <img src="https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=400&q=80" alt="한우육향냉면">
+            </div>
+            <div class="hero-bg-overlay"></div>
+        </div>
+
+        <div class="hero-content">
+            <h1>나만의 취향이 가득 담긴<br>우리의 미식 목록</h1>
+            <p>정성을 다해 엄선한 11곳의 특별한 로컬 맛집입니다.</p>
+        </div>
+    </section>
+
+    <!-- 서울 지도 섹션 -->
+    <section class="map-section" id="map-section">
+        <div class="map-wrapper">
+            <div id="map"></div>
+        </div>
+    </section>
+
+    <!-- 메인 식당 구별 그룹 영역 -->
+    <main class="main-container" id="list-section">
+        <h2 class="section-title">구 별로 모아보기</h2>
+        <div id="grouped-gourmet-container">
+            <!-- 자바스크립트로 구별 섹션 및 카드가 동적으로 생성됩니다 -->
+        </div>
+    </main>
+
+    <!-- 바텀 시트 스타일의 상세 모달 -->
+    <div class="modal-overlay" id="detail-modal">
+        <div class="modal-content">
+            <div class="modal-handle"></div>
+            <div class="modal-header">
+                <div>
+                    <div class="card-tags" id="modal-tags"></div>
+                    <h2 id="modal-title" style="font-size: 1.7rem; font-weight: 800; margin-top: 6px;">식당 이름</h2>
+                </div>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            
+            <div class="modal-body" id="modal-description">
+                상세 정보가 나타납니다.
+            </div>
+
+            <div class="modal-meta">
+                <div class="modal-meta-item">
+                    <span class="meta-label">대표 메뉴</span>
+                    <span id="modal-menu">대표 메뉴들</span>
+                </div>
+                <div class="modal-meta-item">
+                    <span class="meta-label">주소지</span>
+                    <span id="modal-address">주소</span>
+                </div>
+                <div class="modal-meta-item">
+                    <span class="meta-label">특징</span>
+                    <span id="modal-feature">특징 요약</span>
+                </div>
+            </div>
+
+            <!-- 네이버 지도 바로가기 버튼 -->
+            <a href="#" target="_blank" class="naver-map-btn" id="naver-map-link">
+                <span class="naver-logo-icon">N</span>
+                <span>네이버 지도로 길찾기 / 위치 확인</span>
+            </a>
+
+            <!-- 주소 복사 기능형 플레이스홀더 -->
+            <div class="modal-map-container" id="modal-map">
+                <div class="map-icon">📋</div>
+                <div class="map-title" id="map-target">도로명 주소 복사하기</div>
+                <div class="map-sub" id="map-sub">클릭하면 길찾기용 주소가 클립보드로 복사됩니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet.js Map Library JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- 스크립트 영역 -->
+    <script>
+        // 1. 요청받은 맛집 11개에 기반한 정밀 데이터베이스 (행정구 정보 추가)
+        const gourmetData = [
+            {
+                id: 1,
+                name: "카와카츠",
+                category: "일식/카츠",
+                region: "마포구 합정",
+                gu: "마포구",
+                desc: "열흘간 진공 저온 숙성한 국내산 돈육을 파동 오븐에 튀겨 극상의 부드러움을 선사하는 프리미엄 돈카츠 전문점.",
+                detail: "국내 카츠 마니아들 사이에서 최정상급으로 꼽히는 곳입니다. 육즙 가득한 로스카츠와 입안에서 살살 녹는 히레카츠가 명물이며, 특제 로즈마리 올리브유와 허브 솔트를 곁들여 고기 본연의 풍미를 만끽할 수 있습니다.",
+                menu: "특로스카츠, 히레카츠, 로스카츠",
+                address: "서울 마포구 동교로 58",
+                feature: "오토클레이브 저온 조리 기법 / 올리브유 드롭",
+                image: "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5517, 126.9114],
+                emoji: "🥩"
+            },
+            {
+                id: 2,
+                name: "옥돌현옥",
+                category: "한식/평양냉면",
+                region: "은평구 역촌",
+                gu: "은평구",
+                desc: "맑고 은은하면서도 묵직하게 다가오는 육수와 메밀향 가득한 면발이 조화로운 이북 음식 전문점.",
+                detail: "평양냉면 초심자부터 매니아까지 모두를 아우르는 육수의 감칠맛이 특징입니다. 냉면 외에도 부드럽게 삶아낸 어복쟁반과 촉촉한 제육, 평양식 만두가 아주 훌륭한 앙상블을 이룹니다.",
+                menu: "평양냉면, 어복쟁반, 녹두지짐이",
+                address: "서울 은평구 역말로 83",
+                feature: "메밀 함량이 높은 맷돌 면발 / 정갈하고 담백한 육수",
+                image: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=600&q=80",
+                coords: [37.6048, 126.9152],
+                emoji: "🍜"
+            },
+            {
+                id: 3,
+                name: "도이칠란드박",
+                category: "양식/샤퀴테리",
+                region: "성북구 안암",
+                gu: "성북구",
+                desc: "수제 잠봉뵈르와 정통 도이치 킬바사 소시지를 아늑하고 캐주얼한 분위기에서 즐기는 소시지 전문점.",
+                detail: "직접 염장하고 훈제한 육가공품을 선보이는 수제 샤퀴테리 숍입니다. 바삭한 바게트 속에 두툼하게 채워진 풍성한 잠봉뵈르 샌드위치와 육즙이 톡 터지는 그릴드 소시지가 인상적인 맥주 도둑입니다.",
+                menu: "잠봉뵈르 샌드위치, 독일식 킬바사, 수제 맥주",
+                address: "서울 성북구 안암로 9가길 66",
+                feature: "정통 독일식 훈연 가공 방식 / 대학가 속 세련된 샤퀴테리 공방",
+                image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5857, 127.0223],
+                emoji: "🌭"
+            },
+            {
+                id: 4,
+                name: "우래옥",
+                category: "한식/평양냉면",
+                region: "중구 주교동",
+                gu: "중구",
+                desc: "1946년 개업 이래 서울 평양냉면의 역사를 쓰고 있는, 한우로 우려낸 가장 깊고 진한 육수의 평냉 노포.",
+                detail: "동치미 국물을 섞지 않고 순수 한우 육수로만 맛을 내어 묵직하고 육향 가득한 국물 맛을 자랑합니다. 잘 갈아 만든 순면 메밀국수와 함께 최고의 마블링을 자랑하는 전통 한우 불고기도 명물입니다.",
+                menu: "평양냉면, 한우 불고기, 갈비",
+                address: "서울 중구 창경궁로 62-29",
+                feature: "서울 미래유산 지정 노포 / 100% 명품 육향 평양냉면",
+                image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5683, 126.9987],
+                emoji: "🍲"
+            },
+            {
+                id: 5,
+                name: "스시지현",
+                category: "일식/스시",
+                region: "마포구 연남동",
+                gu: "마포구",
+                desc: "합리적인 가격대에 숙성 네타의 깊은 감칠맛을 느낄 수 있는 캐주얼 판초밥의 강자.",
+                detail: "입안에서 사르르 풀어지는 정교한 샤리(밥)와 제철 생선들을 완벽하게 쥐어내는 가성비 최고의 스시 매장입니다. 모둠초밥 세트에 나오는 계란찜부터 후식까지 디테일한 정성이 가득 묻어납니다.",
+                menu: "모둠초밥 C세트, 모둠사시미",
+                address: "서울 마포구 동교로 227-7",
+                feature: "정성을 다한 숙성 회 공정 / 아담하고 따뜻한 원목 감성",
+                image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5615, 126.9249],
+                emoji: "🍣"
+            },
+            {
+                id: 6,
+                name: "구오 (을지로)",
+                category: "아시안/차이니즈",
+                region: "중구 을지로",
+                gu: "중구",
+                desc: "감각적인 무드 속에 대만식, 사천식 중식을 힙하고 모던하게 재해석한 차이니스 플레이스.",
+                detail: "힙지로 특유의 감각을 담아낸 인테리어와 더불어, 마라의 알싸한 향이 살아있는 탄탄면과 바삭하고 쫀득한 꿔바로우, 대만식 우육면을 깔끔하고 스타일리시하게 즐길 수 있습니다.",
+                menu: "대만식 우육면, 유린기, 마파두부밥",
+                address: "서울 중구 을지로12길 11",
+                feature: "차이니즈 바 감성의 트렌디한 조명 / 이국적인 향신료의 조화",
+                image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5645, 126.9904],
+                emoji: "🥟"
+            },
+            {
+                id: 7,
+                name: "슬로미",
+                category: "카페/디저트",
+                region: "마포구 성산동",
+                gu: "마포구",
+                desc: "천천히 흘러가는 시간 속에서 따뜻한 차와 정성이 깃든 수제 구움과자를 즐기는 힐링 플레이스.",
+                detail: "유기농 밀가루와 고급 발효버터를 사용해 겉바속촉의 식감을 제대로 살려낸 마들렌과 휘낭시에가 시그니처입니다. 조용하게 사색하기 좋은 우드톤 레이아웃이 매력적입니다.",
+                menu: "수제 휘낭시에, 솔티 카라멜 마들렌, 필터 커피",
+                address: "서울 마포구 성미산로 11길 23",
+                feature: "천연 발효 버터 사용 / 사색과 여유를 선물하는 아기자기한 찻방",
+                image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5630, 126.9145],
+                emoji: "🍰"
+            },
+            {
+                id: 8,
+                name: "우동카덴",
+                category: "일식/우동",
+                region: "마포구 서교동",
+                gu: "마포구",
+                desc: "정호영 셰프가 선사하는 족타 방식의 쫄깃하고 탄력 넘치는 면발이 일품인 정통 사누키 우동전문점.",
+                detail: "발로 밟아 면을 치대는 정통 족타 기법을 활용해 차원이 다른 쫄깃함을 지닌 면발을 자부합니다. 가쓰오부시 본연의 진하고 깔끔한 육수를 우려낸 뜨거운 우동부터, 탱글함을 극대화한 냉우동(붓카케)까지 다채롭게 고를 수 있습니다.",
+                menu: "붓카케 우동, 에비텐 우동, 카레 우동",
+                address: "서울 마포구 양화로 7길 4-10",
+                feature: "미쉐린 가이드 빕구르망 선정 / 정통 족타 제면 방식",
+                image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5532, 126.9148],
+                emoji: "🥢"
+            },
+            {
+                id: 9,
+                name: "우동가조쿠",
+                category: "일식/우동",
+                region: "성동구 한양대",
+                gu: "성동구",
+                desc: "매일 직접 뽑아내는 제면소의 싱싱한 면발로 한양대 앞 골목을 주름잡은 가성비 극상의 생면 우동집.",
+                detail: "가와카미 셰프의 비법으로 자가제면을 실시하며, 천연 재료로 우려낸 감칠맛 가득한 쯔유 국물이 고소하고 담백하게 입에 착 감깁니다. 갓 튀겨 올린 새우튀김과 붓카케 우동의 조합이 인기가 가장 좋습니다.",
+                menu: "가조쿠 우동, 붓카케 우동, 돈카츠 정식",
+                address: "서울 성동구 마조로 9",
+                feature: "생활의 달인 우동 편 출연 / 부담 없는 착한 가격의 수제 생면",
+                image: "https://images.unsplash.com/photo-1618413504373-cf6776118d36?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5612, 127.0418],
+                emoji: "🍤"
+            },
+            {
+                id: 10,
+                name: "도우룸",
+                category: "양식/파스타",
+                region: "서초구 서래마을",
+                gu: "서초구",
+                desc: "입 안에서 터지는 다채로운 식감의 수제 생면 파스타를 고급스럽게 제안하는 이탈리안 비스트로.",
+                detail: "매장 내 오픈 키친 생면 제면소에서 그날 생산하는 카펠리니, 카바텔리, 가르가넬리 등 생면의 다채로운 질감을 경험할 수 있습니다. 마늘 버터 소스로 맛을 낸 먹물 카펠리니는 이곳의 부동의 대표작입니다.",
+                menu: "먹물 카펠리니, 도우룸 생면 파스타 코스",
+                address: "서울 서초구 동광로 99 2층",
+                feature: "미쉐린 가이드 가이드 등재 / 맞춤형 생면 셀렉션 다이닝",
+                image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80",
+                coords: [37.4936, 126.9984],
+                emoji: "🍝"
+            },
+            {
+                id: 11,
+                name: "형제상회",
+                category: "일식/수산물",
+                region: "동작구 노량진",
+                gu: "동작구",
+                desc: "노량진 수산시장에서 가장 트렌디하고 정직하게 두툼한 수제 모둠 숙성회를 썰어내는 명품 횟집.",
+                detail: "전통 어시장의 투박함을 벗어나 키오스크 시스템과 일정한 품질 관리로 두툼하고 일정한 품질의 고급 모둠회를 제안합니다. 제철 횟감을 인원과 금액대별로 알차게 배치하여 신뢰도가 매우 높습니다.",
+                menu: "형제 모둠회 (인원별 선택), 계절 고급 모둠회",
+                address: "서울 동작구 노들로 674 노량진수산시장 1층 북3문",
+                feature: "수산시장 현대화의 선두주자 / 24시간 철저한 온도 관리 숙성회",
+                image: "https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fit=crop&w=600&q=80",
+                coords: [37.5168, 126.9385],
+                emoji: "🐟"
+            }
+        ];
+
+        const modal = document.getElementById('detail-modal');
+        const modalClose = document.getElementById('modal-close');
+        let map; // Leaflet map instance
+
+        // 2. 지도 생성 및 데이터 마킹 초기화
+        function initMap() {
+            // 서울 중심지 기준 설정 [위도, 경도], 줌 레벨 11
+            map = L.map('map', {
+                scrollWheelZoom: false // 스크롤 시 지도 확대 방지
+            }).setView([37.555, 126.975], 11);
+
+            // 카르토(CartoDB) 미니멀 맵 테마 적용
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+
+            // 마커 배치
+            gourmetData.forEach(item => {
+                const customIcon = L.divIcon({
+                    html: `<div class="custom-marker" style="width: 40px; height: 40px;">${item.emoji}</div>`,
+                    className: 'custom-div-icon',
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 20]
+                });
+
+                const marker = L.marker(item.coords, { icon: customIcon }).addTo(map);
+
+                // 마커 클릭 시 요약 가이드 팝업
+                const popupContent = `
+                    <div style="text-align: center;">
+                        <h3>${item.name}</h3>
+                        <p>${item.region} • ${item.category}</p>
+                        <button class="popup-btn" onclick="triggerDetailFromMap(${item.id})">상세 정보 열기</button>
+                    </div>
+                `;
+                marker.bindPopup(popupContent, { offset: [0, -10] });
+            });
+        }
+
+        // 지도 팝업 내부의 상세 보기 버튼 이벤트 트리거 함수
+        window.triggerDetailFromMap = function(id) {
+            const item = gourmetData.find(d => d.id === id);
+            if (item) openDetail(item);
+        };
+
+        // 3. 구 별 맛집 그룹화 및 동적 렌더링
+        function renderGroupedGourmet() {
+            const container = document.getElementById('grouped-gourmet-container');
+            container.innerHTML = ''; // 초기화
+
+            // 맛집 데이터를 구(gu) 별로 그룹화
+            const grouped = gourmetData.reduce((acc, current) => {
+                const key = current.gu;
+                if (!acc[key]) {
+                    acc[key] = [];
+                }
+                acc[key].push(current);
+                return acc;
+            }, {});
+
+            // 각 구별 섹션을 동적으로 생성
+            const sortedGus = Object.keys(grouped).sort();
+
+            sortedGus.forEach(guName => {
+                const restaurantsInGu = grouped[guName];
+                
+                // 구 그룹 감싸는 섹션 생성
+                const section = document.createElement('section');
+                section.classList.add('gu-group-section');
+                
+                // 스크롤 시 상단 헤더에 가려지지 않도록 ID와 오프셋 지정
+                section.id = `gu-${guName}`;
+                section.style.scrollMarginTop = "88px";
+
+                // 구 타이틀 구조화
+                section.innerHTML = `
+                    <div class="gu-group-title">
+                        📍 <span>${guName}</span>
+                        <span class="gu-badge">${restaurantsInGu.length}곳</span>
+                    </div>
+                    <div class="grid-container"></div>
+                `;
+
+                const grid = section.querySelector('.grid-container');
+
+                // 그룹 내 식당 카드 추가
+                restaurantsInGu.forEach(item => {
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    card.innerHTML = `
+                        <div class="card-img-box">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div class="card-info">
+                            <div class="card-tags">
+                                <span class="card-tag">${item.category}</span>
+                                <span class="card-tag secondary">${item.region}</span>
+                            </div>
+                            <h3 class="card-title">${item.name}</h3>
+                            <p class="card-desc">${item.desc}</p>
+                        </div>
+                    `;
+
+                    // 클릭 시 상세 바텀 모달 표출 및 지도 센터 이동 연동
+                    card.addEventListener('click', () => {
+                        openDetail(item);
+                        map.setView(item.coords, 14, { animate: true });
+                    });
+
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(section);
+            });
+        }
+
+        // 4. 네비게이션 헤더 '맛집 목록' 드롭다운 목록 동적 구축 (신규 추가)
+        function renderDropdownMenu() {
+            const dropdown = document.getElementById('gu-dropdown');
+            dropdown.innerHTML = ''; // 초기화
+
+            // 데이터베이스에서 고유한 구 이름들을 추출 후 정렬
+            const uniqueGus = [...new Set(gourmetData.map(item => item.gu))].sort();
+
+            uniqueGus.forEach(guName => {
+                const link = document.createElement('a');
+                link.href = `#gu-${guName}`;
+                link.innerText = guName;
+                
+                // 모바일 환경을 배려해 터치/클릭 즉시 드롭다운이 사라지도록 처리 가능하도록 설계
+                link.addEventListener('click', () => {
+                    // 드롭다운 호버 상태 해제 유도를 위해 focus를 다른 곳으로 전환
+                    document.activeElement.blur();
+                });
+
+                dropdown.appendChild(link);
+            });
+        }
+
+        // 5. 모달 레이어 데이터 투입 및 연출
+        function openDetail(data) {
+            // 태그 동적 구성
+            const tagsContainer = document.getElementById('modal-tags');
+            tagsContainer.innerHTML = `
+                <span class="card-tag">${data.category}</span>
+                <span class="card-tag secondary">${data.region}</span>
+            `;
+
+            document.getElementById('modal-title').innerText = data.name;
+            document.getElementById('modal-description').innerText = data.detail;
+            document.getElementById('modal-menu').innerText = data.menu;
+            document.getElementById('modal-address').innerText = data.address;
+            document.getElementById('modal-feature').innerText = data.feature;
+            
+            // 네이버 지도 동적 검색 연동 URL 생성 (안전한 브라우징 인코딩 적용)
+            const mapLink = document.getElementById('naver-map-link');
+            const searchKeyword = `${data.name} ${data.region}`;
+            mapLink.href = `https://map.naver.com/v5/search/${encodeURIComponent(searchKeyword)}`;
+
+            // 주소 복사 세팅
+            document.getElementById('map-target').innerText = "도로명 주소 복사하기";
+            document.getElementById('map-sub').innerText = `${data.address} (클릭 시 클립보드에 복사)`;
+
+            // 주소 복사 액션 바인딩
+            const mapContainer = document.getElementById('modal-map');
+            // 이전 리스너 누적 제거용 클론 기법 적용
+            const newMapContainer = mapContainer.cloneNode(true);
+            mapContainer.parentNode.replaceChild(newMapContainer, mapContainer);
+
+            newMapContainer.addEventListener('click', () => {
+                copyToClipboard(data.address);
+                showCopyIndicator(newMapContainer);
+            });
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 뒷배경 스크롤 고정
+        }
+
+        // 클립보드 복사 유틸리티
+        function copyToClipboard(text) {
+            const tempElem = document.createElement('textarea');
+            tempElem.value = text;
+            document.body.appendChild(tempElem);
+            tempElem.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempElem);
+        }
+
+        // 알림 레이어 연출
+        function showCopyIndicator(elem) {
+            const originalIcon = elem.querySelector('.map-icon').innerText;
+            const originalTitle = elem.querySelector('.map-title').innerText;
+            const originalSub = elem.querySelector('.map-sub').innerText;
+
+            elem.querySelector('.map-icon').innerText = "✅";
+            elem.querySelector('.map-title').innerText = "주소가 복사되었습니다!";
+            elem.querySelector('.map-sub').innerText = "지도 앱이나 내비게이션에 붙여넣어 쉽게 검색하세요.";
+
+            setTimeout(() => {
+                elem.querySelector('.map-icon').innerText = originalIcon;
+                elem.querySelector('.map-title').innerText = originalTitle;
+                elem.querySelector('.map-sub').innerText = originalSub;
+            }, 2000);
+        }
+
+        // 모달 닫기
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = ''; // 스크롤 활성화
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // 6. 스크롤 인터랙션 트리거 (Intersection Observer)
+        function initScrollTrigger() {
+            const cards = document.querySelectorAll('.card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // 최초 노출 이후 해제
+                    }
+                });
+            }, { 
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px" // 여유 공간 설정
+            });
+
+            cards.forEach(card => observer.observe(card));
+        }
+
+        // 최초 런타임 시작
+        window.onload = function() {
+            initMap();
+            renderGroupedGourmet();
+            renderDropdownMenu(); // 드롭다운 리스트 빌드 실행
+            initScrollTrigger();
+        }
+    </script>
+</body>
+</html>
