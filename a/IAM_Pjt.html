@@ -15,6 +15,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
         }
 
         /* 부드러운 스크롤 인터랙션 활성화 */
@@ -23,6 +24,7 @@
         }
 
         :root {
+            /* 라이트 모드 테마 변수 */
             --bg-color: #FBF9F6; /* 매우 부드럽고 따뜻한 미색 파스텔 */
             --card-bg: #FFFFFF;
             --text-main: #1D1D1F; /* 애플 특유의 진한 차콜 */
@@ -32,6 +34,34 @@
             --accent-blue-pastel: #EEF4F8; /* 서브 카테고리용 파스텔 블루 */
             --accent-blue-text: #4A90E2;
             --naver-green: #2DB400; /* 네이버 시그니처 그린 */
+            --header-bg: rgba(251, 249, 246, 0.85);
+            --border-color: rgba(0, 0, 0, 0.04);
+            --meta-bg: #FAFAFC;
+            --meta-border: #F2F2F7;
+            --copy-panel-bg: #F5F7F8;
+            --copy-panel-border: #D1D1D6;
+            --modal-handle-bg: #E5E5EA;
+            --btn-close-bg: #F2F2F7;
+        }
+
+        /* 다크 모드 테마 변수 (body에 .dark-mode 클래스가 추가되면 활성화) */
+        body.dark-mode {
+            --bg-color: #121212; /* 프리미엄 다크 블랙 */
+            --card-bg: #1C1C1E;  /* 애플 다크 스타일 카드 배경 */
+            --text-main: #F5F5F7; /* 밝은 회색 메인 글씨 */
+            --text-sub: #A1A1A6;  /* 부드러운 회색 설명글 */
+            --accent-pastel: #2C201C; /* 차분하고 깊은 어두운 오렌지 브라운 */
+            --accent-text: #FF7F50;    /* 선명하고 눈이 편안한 피치 오렌지 */
+            --accent-blue-pastel: #1C2530; /* 딥 블루 파스텔 */
+            --accent-blue-text: #64B5F6;
+            --header-bg: rgba(18, 18, 18, 0.85);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --meta-bg: #2C2C2E;
+            --meta-border: #3A3A3C;
+            --copy-panel-bg: #2C2C2E;
+            --copy-panel-border: #3A3A3C;
+            --modal-handle-bg: #3A3A3C;
+            --btn-close-bg: #2C2C2E;
         }
 
         body {
@@ -42,22 +72,22 @@
             letter-spacing: -0.3px;
         }
 
-        /* --- 2. Navigation Header --- */
+        /* --- 2. Navigation Header & Scroll Progress --- */
         header {
             position: fixed;
             top: 0;
             width: 100%;
-            background-color: rgba(251, 249, 246, 0.85);
+            background-color: var(--header-bg);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             z-index: 1000;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .nav-container {
             max-width: 1024px;
             margin: 0 auto;
-            padding: 18px 24px;
+            padding: 14px 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -77,9 +107,15 @@
         }
 
         /* 헤더 우측 메뉴 스타일 */
+        .nav-right-wrap {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
         .nav-menu {
             display: flex;
-            gap: 24px;
+            gap: 20px;
             list-style: none;
             align-items: center;
         }
@@ -103,14 +139,65 @@
             transform: translateY(-1px);
         }
 
-        /* --- 3. iOS Style Dropdown Menu (새로 추가됨) --- */
+        /* --- 스크롤 진행 상황 표시 바 (Scroll Progress Bar) --- */
+        .scroll-progress-container {
+            position: absolute;
+            bottom: -1px; /* 헤더 보더라인과 정밀 정렬 */
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: rgba(0, 0, 0, 0.02);
+            z-index: 1001;
+        }
+
+        body.dark-mode .scroll-progress-container {
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .scroll-progress-bar {
+            height: 100%;
+            width: 0%; /* 최초 시작은 0% */
+            background-color: var(--accent-text);
+            border-radius: 0 2px 2px 0;
+            transition: width 0.1s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease; /* 전환 효과 최적화 */
+        }
+
+        /* --- 다크모드 토글 버튼 커스텀 (Apple 감성 스타일) --- */
+        .theme-toggle-btn {
+            background-color: var(--btn-close-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            cursor: pointer;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .theme-toggle-btn:hover {
+            transform: scale(1.05);
+            background-color: var(--meta-border);
+        }
+
+        .theme-toggle-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        /* --- 3. iOS Style Dropdown Menu --- */
         .dropdown-content {
             visibility: hidden;
             opacity: 0;
             position: absolute;
             top: calc(100% + 10px);
             right: 0;
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: var(--card-bg);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             min-width: 140px;
@@ -118,7 +205,7 @@
             border-radius: 16px;
             padding: 8px 0;
             z-index: 1010;
-            border: 1px solid rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
             transform: translateY(8px);
             transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
             pointer-events: none;
@@ -211,6 +298,7 @@
             margin: 0 auto;
         }
 
+        /* 타이핑 액션이 구현되는 타이틀 스타일 */
         .hero h1 {
             font-size: 3rem;
             font-weight: 800;
@@ -218,16 +306,51 @@
             letter-spacing: -1.8px;
             line-height: 1.25;
             color: var(--text-main);
-            animation: fadeInUp 0.8s ease-out;
             text-shadow: 0 2px 20px rgba(251, 249, 246, 0.8); /* 뒷배경과의 극강의 가독성 확보 */
+            display: inline-block;
+            text-align: center;
         }
 
+        body.dark-mode .hero h1 {
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
+        }
+
+        /* 깜빡이는 세련된 타이핑 커서 */
+        .typing-cursor {
+            display: inline-block;
+            width: 3px;
+            height: 0.95em;
+            background-color: var(--accent-text);
+            margin-left: 6px;
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        /* 타이핑 완료 후 부드럽게 등장하는 설명 글 */
         .hero p {
             font-size: 1.15rem;
             color: var(--text-sub);
             font-weight: 500;
-            animation: fadeInUp 1s ease-out;
             text-shadow: 0 2px 10px rgba(251, 249, 246, 0.8);
+            opacity: 0; /* 초기 불투명도 0 */
+            transform: translateY(10px);
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* 타이핑 종료 후 p 태그 활성화 전용 클래스 */
+        .hero p.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        body.dark-mode .hero p {
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
         }
 
         /* --- 5. Map Section --- */
@@ -245,7 +368,7 @@
             border-radius: 32px;
             padding: 10px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-            border: 1px solid rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
         }
 
         #map {
@@ -275,10 +398,16 @@
 
         /* Leaflet Popup Custom style to match Apple design */
         .leaflet-popup-content-wrapper {
+            background-color: var(--card-bg) !important;
+            color: var(--text-main) !important;
             border-radius: 16px !important;
             padding: 6px !important;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15) !important;
             font-family: -apple-system, sans-serif !important;
+            border: 1px solid var(--border-color);
+        }
+        .leaflet-popup-tip {
+            background-color: var(--card-bg) !important;
         }
         .leaflet-popup-content h3 {
             font-size: 1rem;
@@ -288,7 +417,7 @@
         }
         .leaflet-popup-content p {
             font-size: 0.8rem;
-            color: #515154;
+            color: var(--text-sub);
             margin-bottom: 8px;
         }
         .popup-btn {
@@ -323,18 +452,68 @@
 
         /* 구별 그룹 섹션 */
         .gu-group-section {
-            margin-bottom: 48px;
+            margin-bottom: 32px;
             animation: fadeInUp 0.8s ease-out;
+            background-color: transparent;
+            border-radius: 28px;
+            padding: 10px;
         }
 
+        /* 클릭 가능한 구 아코디언 타이틀 바 */
         .gu-group-title {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            padding: 12px 18px;
+            border-radius: 20px;
+            background-color: transparent;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .gu-group-title:hover {
+            background-color: var(--btn-close-bg);
+        }
+
+        .gu-group-title:active {
+            transform: scale(0.99);
+        }
+
+        /* 우측 체브론 아이콘 애니메이션 */
+        .chevron-icon {
+            margin-left: auto; /* 아이콘을 무조건 우측 끝으로 밀어냄 */
+            color: var(--text-sub);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* 접혀있는 상태의 화살표 제어 */
+        .gu-group-section.collapsed .chevron-icon {
+            transform: rotate(-180deg);
+        }
+
+        /* 아코디언 콘텐츠 영역 */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 32px;
+            padding: 12px 18px 16px 18px;
+            opacity: 1;
+            max-height: 5000px; /* 자연스러운 슬라이드 전환을 위해 충분히 큰 값을 설정 */
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* 접혔을 때의 상태 스타일링 */
+        .gu-group-section.collapsed .grid-container {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            pointer-events: none; /* 클릭 방지 */
         }
 
         .gu-badge {
@@ -346,10 +525,56 @@
             font-weight: 600;
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 32px;
+        /* --- 6.1 '더보기' 스타일 구현 --- */
+        /* 카드 아이템 중 더보기로 인해 숨겨진 카드 제어 */
+        .card.more-hidden {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* 더보기 트리거 버튼 컨테이너 */
+        .more-btn-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 10px 18px 24px 18px;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* 아코디언이 통째로 닫혔을 때는 더보기 버튼 컨테이너도 함께 축소 */
+        .gu-group-section.collapsed .more-btn-container {
+            display: none;
+        }
+
+        .more-view-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--accent-text);
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 10px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+
+        .more-view-btn:hover {
+            background-color: var(--accent-pastel);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(231, 111, 81, 0.1);
+        }
+
+        .more-view-btn:active {
+            transform: translateY(0);
+        }
+
+        .more-view-btn svg {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         /* --- 7. Beautiful Cards --- */
@@ -363,6 +588,7 @@
             position: relative;
             opacity: 0;
             transform: translateY(40px);
+            border: 1px solid var(--border-color);
         }
 
         .card.visible {
@@ -372,7 +598,7 @@
 
         .card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 16px 36px rgba(180, 160, 150, 0.15);
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
         }
 
         .card-img-box {
@@ -429,7 +655,7 @@
 
         .card-desc {
             font-size: 0.95rem;
-            color: #515154;
+            color: var(--text-sub);
             line-height: 1.5;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -444,7 +670,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: 2000;
@@ -468,11 +694,12 @@
             border-top-left-radius: 32px;
             border-top-right-radius: 32px;
             padding: 40px 32px;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
             transform: translateY(100%);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid var(--border-color);
         }
 
         .modal-overlay.active .modal-content {
@@ -483,7 +710,7 @@
         .modal-handle {
             width: 36px;
             height: 5px;
-            background-color: #E5E5EA;
+            background-color: var(--modal-handle-bg);
             border-radius: 3px;
             margin: -20px auto 24px auto;
         }
@@ -496,14 +723,14 @@
         }
 
         .modal-close {
-            background-color: #F2F2F7;
+            background-color: var(--btn-close-bg);
             border: none;
             width: 32px;
             height: 32px;
             border-radius: 50%;
             font-size: 1.1rem;
             cursor: pointer;
-            color: #86868B;
+            color: var(--text-sub);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -511,23 +738,23 @@
         }
 
         .modal-close:hover {
-            background-color: #E5E5EA;
+            background-color: var(--meta-border);
         }
 
         .modal-body {
             font-size: 1.05rem;
-            color: #48484A;
+            color: var(--text-main);
             line-height: 1.7;
             margin-bottom: 24px;
         }
 
         .modal-meta {
-            background-color: #FAFAFC;
+            background-color: var(--meta-bg);
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 24px;
             font-size: 0.95rem;
-            border: 1px solid #F2F2F7;
+            border: 1px solid var(--meta-border);
         }
 
         .modal-meta-item {
@@ -591,7 +818,7 @@
         .modal-map-container {
             width: 100%;
             height: 140px;
-            background-color: #F5F7F8; 
+            background-color: var(--copy-panel-bg); 
             border-radius: 20px;
             position: relative;
             overflow: hidden;
@@ -601,13 +828,13 @@
             align-items: center;
             text-align: center;
             padding: 20px;
-            border: 1px dashed #D1D1D6;
+            border: 1px dashed var(--copy-panel-border);
             cursor: pointer;
             transition: background-color 0.2s;
         }
 
         .modal-map-container:hover {
-            background-color: #EBF4F8;
+            background-color: var(--accent-blue-pastel);
             border-color: var(--accent-blue-text);
         }
 
@@ -625,7 +852,7 @@
 
         .map-sub {
             font-size: 0.8rem;
-            color: #86868B;
+            color: var(--text-sub);
         }
 
         /* --- Animations --- */
@@ -647,6 +874,12 @@
             .nav-menu a {
                 font-size: 0.85rem;
             }
+            .nav-container {
+                padding: 14px 16px;
+            }
+            .nav-right-wrap {
+                gap: 12px;
+            }
         }
     </style>
 </head>
@@ -656,17 +889,29 @@
     <header>
         <div class="nav-container">
             <div class="logo">Local<span>Gourmet</span></div>
-            <!-- 우측 이동 네비게이션 메뉴 및 드롭다운 구현 -->
-            <ul class="nav-menu">
-                <li><a href="#hero-section">홈</a></li>
-                <li><a href="#map-section">지도</a></li>
-                <li class="dropdown">
-                    <a href="#list-section">맛집 목록</a>
-                    <div class="dropdown-content" id="gu-dropdown">
-                        <!-- 자바스크립트로 구별 목록이 동적 렌더링됩니다 -->
-                    </div>
-                </li>
-            </ul>
+            
+            <div class="nav-right-wrap">
+                <!-- 우측 이동 네비게이션 메뉴 및 드롭다운 -->
+                <ul class="nav-menu">
+                    <li><a href="#hero-section">홈</a></li>
+                    <li><a href="#map-section">지도</a></li>
+                    <li class="dropdown">
+                        <a href="#list-section">맛집 목록</a>
+                        <div class="dropdown-content" id="gu-dropdown">
+                            <!-- 자바스크립트로 구별 목록이 동적 렌더링됩니다 -->
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- 테마 스위처 (다크모드 토글 버튼) -->
+                <button class="theme-toggle-btn" id="theme-toggle" title="화면 테마 변경" aria-label="화면 테마 변경">
+                    <!-- 해/달 SVG 아이콘이 JS에 의해 동적 렌더링됩니다 -->
+                </button>
+            </div>
+        </div>
+        <!-- 얇고 부드러운 스크롤 진행 상단 바 (Progress Bar) -->
+        <div class="scroll-progress-container">
+            <div class="scroll-progress-bar" id="progress-bar"></div>
         </div>
     </header>
 
@@ -685,8 +930,12 @@
         </div>
 
         <div class="hero-content">
-            <h1>나만의 취향이 가득 담긴<br>우리의 미식 목록</h1>
-            <p>정성을 다해 엄선한 11곳의 특별한 로컬 맛집입니다.</p>
+            <!-- 자바스크립트에 의해 타이핑 액션이 구현되는 타이틀 엘리먼트 -->
+            <h1 id="hero-title">
+                <span id="line1"></span><br>
+                <span id="line2"></span><span class="typing-cursor" id="typing-cursor"></span>
+            </h1>
+            <p>또 가보고 싶은 맛집만 골랐습니다.</p>
         </div>
     </section>
 
@@ -927,21 +1176,37 @@
 
         const modal = document.getElementById('detail-modal');
         const modalClose = document.getElementById('modal-close');
+        
         let map; // Leaflet map instance
+        let lightTileLayer; // Light mode map layer
+        let darkTileLayer;  // Dark mode map layer
 
-        // 2. 지도 생성 및 데이터 마킹 초기화
+        // 2. 지도 생성 및 데이터 마킹 초기화 (라이트/다크 타일 분리)
         function initMap() {
             // 서울 중심지 기준 설정 [위도, 경도], 줌 레벨 11
             map = L.map('map', {
                 scrollWheelZoom: false // 스크롤 시 지도 확대 방지
             }).setView([37.555, 126.975], 11);
 
-            // 카르토(CartoDB) 미니멀 맵 테마 적용
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            // 카르토(CartoDB)의 라이트 타일과 다크 타일 준비
+            lightTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
                 subdomains: 'abcd',
                 maxZoom: 20
-            }).addTo(map);
+            });
+
+            darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            });
+
+            // 초기 로드 시 다크모드 여부에 따라 지도 테마 레이어 자동 선택
+            if (document.body.classList.contains('dark-mode')) {
+                darkTileLayer.addTo(map);
+            } else {
+                lightTileLayer.addTo(map);
+            }
 
             // 마커 배치
             gourmetData.forEach(item => {
@@ -972,7 +1237,7 @@
             if (item) openDetail(item);
         };
 
-        // 3. 구 별 맛집 그룹화 및 동적 렌더링
+        // 3. 구 별 맛집 그룹화 및 동적 렌더링 (아코디언 토글 및 더보기 구조 탑재)
         function renderGroupedGourmet() {
             const container = document.getElementById('grouped-gourmet-container');
             container.innerHTML = ''; // 초기화
@@ -1001,21 +1266,31 @@
                 section.id = `gu-${guName}`;
                 section.style.scrollMarginTop = "88px";
 
-                // 구 타이틀 구조화
+                // 구 타이틀과 체브론 화살표 아이콘 및 그리드 뼈대 구조화
                 section.innerHTML = `
-                    <div class="gu-group-title">
+                    <div class="gu-group-title" onclick="toggleAccordion('${guName}')">
                         📍 <span>${guName}</span>
                         <span class="gu-badge">${restaurantsInGu.length}곳</span>
+                        <!-- 애플 감성의 심플한 화살표 SVG -->
+                        <svg class="chevron-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline>
+                        </svg>
                     </div>
                     <div class="grid-container"></div>
                 `;
 
                 const grid = section.querySelector('.grid-container');
 
-                // 그룹 내 식당 카드 추가
-                restaurantsInGu.forEach(item => {
+                // 그룹 내 식당 카드 추가 및 더보기 속성 마킹 (2개 초과 시 more-hidden 처리)
+                restaurantsInGu.forEach((item, index) => {
                     const card = document.createElement('div');
                     card.classList.add('card');
+                    
+                    // 2곳이 넘어가는 리스트는 초기에 'more-hidden' 클래스를 매핑하여 숨깁니다.
+                    if (index >= 2) {
+                        card.classList.add('more-hidden');
+                    }
+
                     card.innerHTML = `
                         <div class="card-img-box">
                             <img src="${item.image}" alt="${item.name}">
@@ -1039,11 +1314,76 @@
                     grid.appendChild(card);
                 });
 
+                // 해당 구의 맛집이 2곳을 초과할 경우 더보기 인터랙션 패널 주입
+                if (restaurantsInGu.length > 2) {
+                    const moreBtnContainer = document.createElement('div');
+                    moreBtnContainer.classList.add('more-btn-container');
+                    moreBtnContainer.innerHTML = `
+                        <button class="more-view-btn" onclick="toggleMoreView('${guName}', ${restaurantsInGu.length})">
+                            <span>남은 ${restaurantsInGu.length - 2}곳 더보기</span>
+                            <svg viewBox="0 0 24 24" width="16" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                    `;
+                    section.appendChild(moreBtnContainer);
+                }
+
                 container.appendChild(section);
             });
         }
 
-        // 4. 네비게이션 헤더 '맛집 목록' 드롭다운 목록 동적 구축 (신규 추가)
+        // --- 아코디언 접기 / 펴기 핵심 JS 함수 ---
+        function toggleAccordion(guName) {
+            const section = document.getElementById(`gu-${guName}`);
+            if (section) {
+                section.classList.toggle('collapsed');
+            }
+        }
+
+        // --- 더보기 / 접기 토글 핵심 JS 기능 ---
+        function toggleMoreView(guName, totalCount) {
+            const section = document.getElementById(`gu-${guName}`);
+            if (!section) return;
+
+            const hiddenCards = section.querySelectorAll('.card.more-hidden, .card.more-visible');
+            const moreBtn = section.querySelector('.more-view-btn');
+            const moreBtnText = moreBtn.querySelector('span');
+            const moreBtnIcon = moreBtn.querySelector('svg');
+
+            // 현재 펼쳐져 있는 상태인지 검사
+            const isExpanded = moreBtn.classList.contains('expanded');
+
+            if (!isExpanded) {
+                // 펼쳐지지 않은 상태 -> 펼침 진행
+                hiddenCards.forEach(card => {
+                    card.style.display = 'block';
+                    // 애니메이션 트랜지션을 위해 시간차를 살짝 두고 visible 처리
+                    setTimeout(() => {
+                        card.classList.remove('more-hidden');
+                        card.classList.add('more-visible', 'visible');
+                    }, 50);
+                });
+                moreBtn.classList.add('expanded');
+                moreBtnText.innerText = "간단히 접기";
+                moreBtnIcon.style.transform = "rotate(-180deg)";
+            } else {
+                // 이미 펼쳐진 상태 -> 다시 접음
+                hiddenCards.forEach(card => {
+                    card.classList.remove('more-visible');
+                    card.classList.add('more-hidden');
+                    card.style.display = 'none';
+                });
+                moreBtn.classList.remove('expanded');
+                moreBtnText.innerText = `남은 ${totalCount - 2}곳 더보기`;
+                moreBtnIcon.style.transform = "rotate(0deg)";
+                
+                // 접었을 때 타이틀 위로 스크롤을 올려 시야가 튕기지 않도록 함
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // 4. 네비게이션 헤더 '맛집 목록' 드롭다운 목록 동적 구축
         function renderDropdownMenu() {
             const dropdown = document.getElementById('gu-dropdown');
             dropdown.innerHTML = ''; // 초기화
@@ -1056,9 +1396,35 @@
                 link.href = `#gu-${guName}`;
                 link.innerText = guName;
                 
-                // 모바일 환경을 배려해 터치/클릭 즉시 드롭다운이 사라지도록 처리 가능하도록 설계
-                link.addEventListener('click', () => {
-                    // 드롭다운 호버 상태 해제 유도를 위해 focus를 다른 곳으로 전환
+                // UX 최적화: 드롭다운 클릭 시 해당 구를 자동으로 펼치고(Expand) + 더보기 내역도 모두 한 번에 열어줍니다.
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // 기본 앵커 이동 차단
+                    
+                    const targetSection = document.getElementById(`gu-${guName}`);
+                    if (targetSection) {
+                        // 1) 구 섹션 아코디언 열기
+                        targetSection.classList.remove('collapsed');
+                        
+                        // 2) 숨겨져 있던 더보기 카드들 자동 활성화
+                        const hiddenCards = targetSection.querySelectorAll('.card.more-hidden');
+                        const moreBtn = targetSection.querySelector('.more-view-btn');
+                        
+                        if (hiddenCards.length > 0 && moreBtn) {
+                            hiddenCards.forEach(card => {
+                                card.style.display = 'block';
+                                card.classList.remove('more-hidden');
+                                card.classList.add('more-visible', 'visible');
+                            });
+                            moreBtn.classList.add('expanded');
+                            moreBtn.querySelector('span').innerText = "간단히 접기";
+                            moreBtn.querySelector('svg').style.transform = "rotate(-180deg)";
+                        }
+                        
+                        // 3) 자연스러운 스크롤 위치 이동
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                    
+                    // 터치/클릭 시 드롭다운 닫힘 보완을 위해 블러 처리
                     document.activeElement.blur();
                 });
 
@@ -1161,12 +1527,139 @@
             cards.forEach(card => observer.observe(card));
         }
 
+        // --- 7. 다크모드 관리 시스템 ---
+        const themeBtn = document.getElementById('theme-toggle');
+
+        // 해/달 아이콘 렌더링 템플릿
+        const sunIcon = `
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3zm0-10c.28 0 .5-.22.5-.5V3c0-.28-.22-.5-.5-.5s-.5.22-.5.5v1.5c0 .28.22.5.5.5zm0 14c-.28 0-.5.22-.5.5V21c0 .28.22.5.5.5s.5-.22.5-.5v-1.5c0-.28-.22-.5-.5-.5zm7.07-12.07c.1-.1.1-.26 0-.36l-1.06-1.06c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06zm-11.31 11.3c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06zM19.5 12c0-.28-.22-.5-.5-.5H17.5c-.28 0-.5.22-.5.5s.22.5.5.5H19c.28 0 .5-.22.5-.5zm-14.5 0c0 .28.22.5.5.5H7c.28 0 .5-.22.5-.5s-.22-.5-.5-.5H5.5c-.28 0-.5.22-.5.5zm13.12 4.93c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06zm-11.31-11.3c.1.1.26.1.36 0l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06z"/>
+            </svg>
+        `;
+
+        const moonIcon = `
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.3 22h-.1c-5.5 0-10-4.5-10-10 0-4.8 3.5-8.9 8.2-9.8.5-.1 1 .3.9.8-.1.4-.4.8-.4 1.3 0 4.4 3.6 8 8 8 .4 0 .9-.1 1.3-.3.5-.2 1 .2.9.8-.9 4.7-5 8.2-9.8 8.2zm-6.2-10c0 3.3 2.7 6 6 6 2.4 0 4.5-1.4 5.4-3.5-.8.3-1.6.5-2.5.5-5.5 0-10-4.5-10-10 0-.9.1-1.7.4-2.5-2.1.9-3.5 3-3.5 5.5z"/>
+            </svg>
+        `;
+
+        // 테마 상태 갱신 함수 (버튼 아이콘 및 지도 스타일 자동 매핑)
+        function updateTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+                themeBtn.innerHTML = sunIcon; // 다크 모드일 때는 라이트 모드로 갈 수 있게 '해' 표출
+                if (map && lightTileLayer && darkTileLayer) {
+                    map.removeLayer(lightTileLayer);
+                    darkTileLayer.addTo(map);
+                }
+            } else {
+                document.body.classList.remove('dark-mode');
+                themeBtn.innerHTML = moonIcon; // 라이트 모드일 때는 다크 모드로 갈 수 있게 '달' 표출
+                if (map && lightTileLayer && darkTileLayer) {
+                    map.removeLayer(darkTileLayer);
+                    lightTileLayer.addTo(map);
+                }
+            }
+        }
+
+        // 시스템 테마 및 로컬스토리지 선호 테마 수집
+        const savedTheme = localStorage.getItem('theme');
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let isDarkMode = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+
+        // 첫 로딩 테마 반영
+        updateTheme(isDarkMode);
+
+        // 클릭 이벤트 리스너 바인딩
+        themeBtn.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
+            updateTheme(isDarkMode);
+        });
+
+        // --- 8. 스크롤 진행 바 애니메이션 이벤트 핸들러 ---
+        function handleScrollProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            
+            // 현재 스크롤된 높이 계산
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            // 전체 문서의 실제 높이에서 뷰포트 창 크기를 뺌 (최대 스크롤 가능 범위)
+            const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            
+            // 진행률 백분율(%) 계산
+            const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            
+            // 진행 바 가로 폭 반영
+            progressBar.style.width = scrollPercent + '%';
+        }
+
+        // --- 9. 한 글자씩 출력되는 타이핑 애니메이션 코어 로직 (신규 추가) ---
+        function startTypingEffect() {
+            const line1Text = "직접 가보고 선정한 나의 맛집";
+            const line2Text = "여러분도 가보세요";
+            
+            const line1El = document.getElementById('line1');
+            const line2El = document.getElementById('line2');
+            const cursorEl = document.getElementById('typing-cursor');
+            const subtitleEl = document.querySelector('.hero-content p');
+            
+            let i = 0;
+            let j = 0;
+            const typingSpeed = 90; // 한 글자 출력 속도 (밀리초 단위)
+
+            // 첫 번째 줄 타이핑 시작
+            function typeLine1() {
+                if (i < line1Text.length) {
+                    line1El.textContent += line1Text.charAt(i);
+                    i++;
+                    setTimeout(typeLine1, typingSpeed);
+                } else {
+                    // 첫 번째 줄 타이핑 완료 후 약간의 휴지기를 거치고 두 번째 줄 시작
+                    setTimeout(typeLine2, 250);
+                }
+            }
+
+            // 두 번째 줄 타이핑 시작
+            function typeLine2() {
+                if (j < line2Text.length) {
+                    line2El.textContent += line2Text.charAt(j);
+                    j++;
+                    setTimeout(typeLine2, typingSpeed);
+                } else {
+                    // 타이핑이 모두 끝나면 깜빡이던 세로선 커서를 자연스럽게 페이드아웃
+                    setTimeout(() => {
+                        cursorEl.style.opacity = '0';
+                        setTimeout(() => {
+                            cursorEl.style.display = 'none';
+                        }, 300);
+                    }, 1200);
+
+                    // 설명글(p 태그) 서서히 나타나도록 클래스 매핑
+                    setTimeout(() => {
+                        subtitleEl.classList.add('visible');
+                    }, 350);
+                }
+            }
+
+            typeLine1();
+        }
+
         // 최초 런타임 시작
         window.onload = function() {
             initMap();
+            // 지도가 그려진 이후에도 테마가 완전하게 한 번 더 매핑되도록 확실한 정비
+            updateTheme(isDarkMode);
             renderGroupedGourmet();
-            renderDropdownMenu(); // 드롭다운 리스트 빌드 실행
+            renderDropdownMenu();
             initScrollTrigger();
+            
+            // 타이핑 액션 트리거 호출
+            startTypingEffect();
+            
+            // 스크롤 이벤트 바인딩
+            window.addEventListener('scroll', handleScrollProgress);
+            // 초기 페이지 진입 시 한 번 동작해 위치 보정
+            handleScrollProgress();
         }
     </script>
 </body>
