@@ -195,20 +195,26 @@
             visibility: hidden;
             opacity: 0;
             position: absolute;
-            top: calc(100% + 10px);
+            top: 100%; /* 수정: top: calc(100% + 10px)에서 gap 제거 */
+            padding-top: 10px; /* 수정: 빈 공간(Gap) 대신 패딩을 주어 hover가 연결되게 함 */
             right: 0;
-            background-color: var(--card-bg);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background-color: transparent; /* 투명한 패딩 영역 */
             min-width: 140px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border-radius: 16px;
-            padding: 8px 0;
             z-index: 1010;
-            border: 1px solid var(--border-color);
             transform: translateY(8px);
             transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.25s;
             pointer-events: none;
+        }
+
+        /* 실제 메뉴 콘텐츠 스타일 */
+        .dropdown-inner {
+            background-color: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 16px;
+            padding: 8px 0;
+            border: 1px solid var(--border-color);
         }
 
         /* 마우스 호버 시 자연스럽게 주르르 띄워지는 애니메이션 인터랙션 */
@@ -219,7 +225,7 @@
             pointer-events: auto;
         }
 
-        .dropdown-content a {
+        .dropdown-inner a {
             color: var(--text-sub);
             padding: 8px 18px;
             text-decoration: none;
@@ -229,10 +235,10 @@
             transition: background-color 0.2s, color 0.2s;
             text-align: right;
             border-radius: 0;
-            transform: none !important; /* 개별 링크의 호버 상승 무효화 */
+            transform: none !important;
         }
 
-        .dropdown-content a:hover {
+        .dropdown-inner a:hover {
             background-color: var(--accent-pastel);
             color: var(--accent-text);
         }
@@ -248,7 +254,7 @@
             text-align: center;
             padding: 120px 24px 60px 24px;
             margin-top: 60px;
-            overflow: hidden; /* 블러 영역이 빠져나가지 않도록 처리 */
+            overflow: hidden; 
         }
 
         /* 흐려진 음식 이미지가 합성되어 움직이는 배경 랩 */
@@ -272,8 +278,8 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 0;
-            filter: blur(45px) saturate(1.4); /* 이미지를 극도로 흐리고 풍부하게 */
-            opacity: 0.35; /* 은은하게 뒤편에 비치도록 투명도 조절 */
+            filter: blur(45px) saturate(1.4); 
+            opacity: 0.35; 
         }
 
         .hero-bg-images img {
@@ -282,7 +288,6 @@
             object-fit: cover;
         }
 
-        /* 파스텔톤 테마와 자연스럽게 섞이도록 레이어 마스크 적용 */
         .hero-bg-overlay {
             position: absolute;
             inset: 0;
@@ -290,7 +295,6 @@
             z-index: 2;
         }
 
-        /* 타이틀 정보 콘텐츠 레이어 */
         .hero-content {
             position: relative;
             z-index: 3;
@@ -298,7 +302,6 @@
             margin: 0 auto;
         }
 
-        /* 타이핑 액션이 구현되는 타이틀 스타일 */
         .hero h1 {
             font-size: 3rem;
             font-weight: 800;
@@ -306,7 +309,7 @@
             letter-spacing: -1.8px;
             line-height: 1.25;
             color: var(--text-main);
-            text-shadow: 0 2px 20px rgba(251, 249, 246, 0.8); /* 뒷배경과의 극강의 가독성 확보 */
+            text-shadow: 0 2px 20px rgba(251, 249, 246, 0.8);
             display: inline-block;
             text-align: center;
         }
@@ -315,7 +318,6 @@
             text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
         }
 
-        /* 깜빡이는 세련된 타이핑 커서 */
         .typing-cursor {
             display: inline-block;
             width: 3px;
@@ -332,18 +334,16 @@
             50% { opacity: 1; }
         }
 
-        /* 타이핑 완료 후 부드럽게 등장하는 설명 글 */
         .hero p {
             font-size: 1.15rem;
             color: var(--text-sub);
             font-weight: 500;
             text-shadow: 0 2px 10px rgba(251, 249, 246, 0.8);
-            opacity: 0; /* 초기 불투명도 0 */
+            opacity: 0; 
             transform: translateY(10px);
             transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 타이핑 종료 후 p 태그 활성화 전용 클래스 */
         .hero p.visible {
             opacity: 1;
             transform: translateY(0);
@@ -359,7 +359,6 @@
             margin: 0 auto;
             padding: 0 24px 40px 24px;
             animation: fadeInUp 1.1s ease-out;
-            /* 네비게이션 헤더에 가려지지 않도록 오프셋 지정 */
             scroll-margin-top: 88px;
         }
 
@@ -438,7 +437,6 @@
             max-width: 1024px;
             margin: 0 auto;
             padding: 0 24px 120px 24px;
-            /* 네비게이션 헤더에 가려지지 않도록 오프셋 지정 */
             scroll-margin-top: 88px;
         }
 
@@ -450,16 +448,17 @@
             position: relative;
         }
 
-        /* 구별 그룹 섹션 */
         .gu-group-section {
             margin-bottom: 32px;
             animation: fadeInUp 0.8s ease-out;
             background-color: transparent;
             border-radius: 28px;
             padding: 10px;
+            cursor: pointer; /* 클릭 가능한 영역임을 표시 */
+            scroll-margin-top: 20px; /* 화면 상단에 붙을 때 여백 확보 */
+            transition: all 0.3s ease;
         }
 
-        /* 클릭 가능한 구 아코디언 타이틀 바 */
         .gu-group-title {
             font-size: 1.25rem;
             font-weight: 700;
@@ -483,37 +482,34 @@
             transform: scale(0.99);
         }
 
-        /* 우측 체브론 아이콘 애니메이션 */
         .chevron-icon {
-            margin-left: auto; /* 아이콘을 무조건 우측 끝으로 밀어냄 */
+            margin-left: auto; 
             color: var(--text-sub);
             transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 접혀있는 상태의 화살표 제어 */
         .gu-group-section.collapsed .chevron-icon {
             transform: rotate(-180deg);
         }
 
-        /* 아코디언 콘텐츠 영역 */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 32px;
             padding: 12px 18px 16px 18px;
             opacity: 1;
-            max-height: 5000px; /* 자연스러운 슬라이드 전환을 위해 충분히 큰 값을 설정 */
+            max-height: 5000px;
             overflow: hidden;
             transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* 접혔을 때의 상태 스타일링 */
         .gu-group-section.collapsed .grid-container {
             max-height: 0;
             opacity: 0;
             padding-top: 0;
             padding-bottom: 0;
-            pointer-events: none; /* 클릭 방지 */
+            pointer-events: none;
+            display: none;
         }
 
         .gu-badge {
@@ -525,15 +521,12 @@
             font-weight: 600;
         }
 
-        /* --- 6.1 '더보기' 스타일 구현 --- */
-        /* 카드 아이템 중 더보기로 인해 숨겨진 카드 제어 */
         .card.more-hidden {
             display: none;
             opacity: 0;
             transform: translateY(20px);
         }
 
-        /* 더보기 트리거 버튼 컨테이너 */
         .more-btn-container {
             display: flex;
             justify-content: center;
@@ -542,7 +535,6 @@
             transition: max-height 0.3s ease, opacity 0.3s ease;
         }
 
-        /* 아코디언이 통째로 닫혔을 때는 더보기 버튼 컨테이너도 함께 축소 */
         .gu-group-section.collapsed .more-btn-container {
             display: none;
         }
@@ -706,7 +698,6 @@
             transform: translateY(0);
         }
 
-        /* 드래그 핸들처럼 보이는 미니멀 바 */
         .modal-handle {
             width: 36px;
             height: 5px;
@@ -773,7 +764,6 @@
             min-width: 64px;
         }
 
-        /* 실제 네이버 지도 길찾기 버튼 */
         .naver-map-btn {
             display: flex;
             align-items: center;
@@ -814,7 +804,6 @@
             font-size: 0.85rem;
         }
 
-        /* 가상 지도 패널 */
         .modal-map-container {
             width: 100%;
             height: 140px;
@@ -855,72 +844,68 @@
             color: var(--text-sub);
         }
 
-        /* --- Animations --- */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 반응형 디자인 최적화 */
         @media (max-width: 600px) {
             .hero h1 { font-size: 2.2rem; }
             .modal-content { padding: 32px 20px; }
             #map { height: 350px; }
-            
-            /* 모달 및 헤더의 모바일 대응 */
-            .nav-menu {
-                gap: 12px;
-            }
-            .nav-menu a {
-                font-size: 0.85rem;
-            }
-            .nav-container {
-                padding: 14px 16px;
-            }
-            .nav-right-wrap {
-                gap: 12px;
-            }
+            .nav-menu { gap: 12px; }
+            .nav-menu a { font-size: 0.85rem; }
+            .nav-container { padding: 14px 16px; }
+            .nav-right-wrap { gap: 12px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 상단 헤더 -->
     <header>
         <div class="nav-container">
             <div class="logo">Local<span>Gourmet</span></div>
             
             <div class="nav-right-wrap">
-                <!-- 우측 이동 네비게이션 메뉴 및 드롭다운 -->
+                <!-- 변경된 모드 전환 라벨 (버튼 없이 라벨 클릭으로 작동) -->
+                <div id="toggle-mode-btn" class="cursor-pointer" title="목록 기준 전환" style="user-select: none;">
+                    <span id="mode-label" style="
+                        font-size: 0.8rem; 
+                        font-weight: 600; 
+                        color: var(--text-main); 
+                        padding: 6px 14px; 
+                        border: 1px solid var(--border-color); 
+                        border-radius: 20px; 
+                        background-color: var(--btn-close-bg);
+                        display: inline-block;
+                        transition: all 0.2s;
+                    ">지역별</span>
+                </div>
+
                 <ul class="nav-menu">
                     <li><a href="#hero-section">홈</a></li>
                     <li><a href="#map-section">지도</a></li>
                     <li class="dropdown">
                         <a href="#list-section">맛집 목록</a>
                         <div class="dropdown-content" id="gu-dropdown">
-                            <!-- 자바스크립트로 구별 목록이 동적 렌더링됩니다 -->
+                            <!-- 드롭다운 내부 감싸는 래퍼 추가 -->
+                            <div class="dropdown-inner"></div>
                         </div>
                     </li>
                 </ul>
 
-                <!-- 테마 스위처 (다크모드 토글 버튼) -->
                 <button class="theme-toggle-btn" id="theme-toggle" title="화면 테마 변경" aria-label="화면 테마 변경">
-                    <!-- 해/달 SVG 아이콘이 JS에 의해 동적 렌더링됩니다 -->
                 </button>
             </div>
         </div>
-        <!-- 얇고 부드러운 스크롤 진행 상단 바 (Progress Bar) -->
         <div class="scroll-progress-container">
             <div class="scroll-progress-bar" id="progress-bar"></div>
         </div>
     </header>
 
-    <!-- 히어로 섹션 (감성 블러 백그라운드 적용) -->
     <section class="hero" id="hero-section">
-        <!-- 타이틀 뒷편의 은은하고 흐려진 음식 아트 백그라운드 -->
         <div class="hero-bg-wrapper">
             <div class="hero-bg-images">
-                <!-- 큐레이션된 풍성한 음식 사진 4장 배치 -->
                 <img src="https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=400&q=80" alt="돈카츠">
                 <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=400&q=80" alt="스시">
                 <img src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=400&q=80" alt="파스타">
@@ -930,7 +915,6 @@
         </div>
 
         <div class="hero-content">
-            <!-- 자바스크립트에 의해 타이핑 액션이 구현되는 타이틀 엘리먼트 -->
             <h1 id="hero-title">
                 <span id="line1"></span><br>
                 <span id="line2"></span><span class="typing-cursor" id="typing-cursor"></span>
@@ -939,22 +923,19 @@
         </div>
     </section>
 
-    <!-- 서울 지도 섹션 -->
     <section class="map-section" id="map-section">
         <div class="map-wrapper">
             <div id="map"></div>
         </div>
     </section>
 
-    <!-- 메인 식당 구별 그룹 영역 -->
     <main class="main-container" id="list-section">
-        <h2 class="section-title">구 별로 모아보기</h2>
+        <!-- <h2 class="section-title">구 별로 모아보기</h2> -->
+        <h2 class="section-title" id="section-title">구 별로 모아보기</h2>
         <div id="grouped-gourmet-container">
-            <!-- 자바스크립트로 구별 섹션 및 카드가 동적으로 생성됩니다 -->
         </div>
     </main>
 
-    <!-- 바텀 시트 스타일의 상세 모달 -->
     <div class="modal-overlay" id="detail-modal">
         <div class="modal-content">
             <div class="modal-handle"></div>
@@ -985,680 +966,357 @@
                 </div>
             </div>
 
-            <!-- 네이버 지도 바로가기 버튼 -->
             <a href="#" target="_blank" class="naver-map-btn" id="naver-map-link">
                 <span class="naver-logo-icon">N</span>
                 <span>네이버 지도로 길찾기 / 위치 확인</span>
             </a>
 
-            <!-- 주소 복사 기능형 플레이스홀더 -->
             <div class="modal-map-container" id="modal-map">
                 <div class="map-icon">📋</div>
                 <div class="map-title" id="map-target">도로명 주소 복사하기</div>
                 <div class="map-sub" id="map-sub">클릭하면 길찾기용 주소가 클립보드로 복사됩니다.</div>
             </div>
         </div>
+        <div class="controls">
+            <select id="mode-selector" onchange="changeMode()">
+                <option value="category">카테고리별 보기</option>
+                <option value="region">지역별 보기</option>
+            </select>
+        </div>
     </div>
 
-    <!-- Leaflet.js Map Library JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <!-- 스크립트 영역 -->
     <script>
-        // 1. 요청받은 맛집 11개에 기반한 정밀 데이터베이스 (행정구 정보 추가)
         const gourmetData = [
-            {
-                id: 1,
-                name: "카와카츠",
-                category: "일식/카츠",
-                region: "마포구 합정",
-                gu: "마포구",
-                desc: "열흘간 진공 저온 숙성한 국내산 돈육을 파동 오븐에 튀겨 극상의 부드러움을 선사하는 프리미엄 돈카츠 전문점.",
-                detail: "국내 카츠 마니아들 사이에서 최정상급으로 꼽히는 곳입니다. 육즙 가득한 로스카츠와 입안에서 살살 녹는 히레카츠가 명물이며, 특제 로즈마리 올리브유와 허브 솔트를 곁들여 고기 본연의 풍미를 만끽할 수 있습니다.",
-                menu: "특로스카츠, 히레카츠, 로스카츠",
-                address: "서울 마포구 동교로 58",
-                feature: "오토클레이브 저온 조리 기법 / 올리브유 드롭",
-                image: "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5517, 126.9114],
-                emoji: "🥩"
-            },
-            {
-                id: 2,
-                name: "옥돌현옥",
-                category: "한식/평양냉면",
-                region: "은평구 역촌",
-                gu: "은평구",
-                desc: "맑고 은은하면서도 묵직하게 다가오는 육수와 메밀향 가득한 면발이 조화로운 이북 음식 전문점.",
-                detail: "평양냉면 초심자부터 매니아까지 모두를 아우르는 육수의 감칠맛이 특징입니다. 냉면 외에도 부드럽게 삶아낸 어복쟁반과 촉촉한 제육, 평양식 만두가 아주 훌륭한 앙상블을 이룹니다.",
-                menu: "평양냉면, 어복쟁반, 녹두지짐이",
-                address: "서울 은평구 역말로 83",
-                feature: "메밀 함량이 높은 맷돌 면발 / 정갈하고 담백한 육수",
-                image: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=600&q=80",
-                coords: [37.6048, 126.9152],
-                emoji: "🍜"
-            },
-            {
-                id: 3,
-                name: "도이칠란드박",
-                category: "양식/샤퀴테리",
-                region: "성북구 안암",
-                gu: "성북구",
-                desc: "수제 잠봉뵈르와 정통 도이치 킬바사 소시지를 아늑하고 캐주얼한 분위기에서 즐기는 소시지 전문점.",
-                detail: "직접 염장하고 훈제한 육가공품을 선보이는 수제 샤퀴테리 숍입니다. 바삭한 바게트 속에 두툼하게 채워진 풍성한 잠봉뵈르 샌드위치와 육즙이 톡 터지는 그릴드 소시지가 인상적인 맥주 도둑입니다.",
-                menu: "잠봉뵈르 샌드위치, 독일식 킬바사, 수제 맥주",
-                address: "서울 성북구 안암로 9가길 66",
-                feature: "정통 독일식 훈연 가공 방식 / 대학가 속 세련된 샤퀴테리 공방",
-                image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5857, 127.0223],
-                emoji: "🌭"
-            },
-            {
-                id: 4,
-                name: "우래옥",
-                category: "한식/평양냉면",
-                region: "중구 주교동",
-                gu: "중구",
-                desc: "1946년 개업 이래 서울 평양냉면의 역사를 쓰고 있는, 한우로 우려낸 가장 깊고 진한 육수의 평냉 노포.",
-                detail: "동치미 국물을 섞지 않고 순수 한우 육수로만 맛을 내어 묵직하고 육향 가득한 국물 맛을 자랑합니다. 잘 갈아 만든 순면 메밀국수와 함께 최고의 마블링을 자랑하는 전통 한우 불고기도 명물입니다.",
-                menu: "평양냉면, 한우 불고기, 갈비",
-                address: "서울 중구 창경궁로 62-29",
-                feature: "서울 미래유산 지정 노포 / 100% 명품 육향 평양냉면",
-                image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5683, 126.9987],
-                emoji: "🍲"
-            },
-            {
-                id: 5,
-                name: "스시지현",
-                category: "일식/스시",
-                region: "마포구 연남동",
-                gu: "마포구",
-                desc: "합리적인 가격대에 숙성 네타의 깊은 감칠맛을 느낄 수 있는 캐주얼 판초밥의 강자.",
-                detail: "입안에서 사르르 풀어지는 정교한 샤리(밥)와 제철 생선들을 완벽하게 쥐어내는 가성비 최고의 스시 매장입니다. 모둠초밥 세트에 나오는 계란찜부터 후식까지 디테일한 정성이 가득 묻어납니다.",
-                menu: "모둠초밥 C세트, 모둠사시미",
-                address: "서울 마포구 동교로 227-7",
-                feature: "정성을 다한 숙성 회 공정 / 아담하고 따뜻한 원목 감성",
-                image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5615, 126.9249],
-                emoji: "🍣"
-            },
-            {
-                id: 6,
-                name: "구오 (을지로)",
-                category: "아시안/차이니즈",
-                region: "중구 을지로",
-                gu: "중구",
-                desc: "감각적인 무드 속에 대만식, 사천식 중식을 힙하고 모던하게 재해석한 차이니스 플레이스.",
-                detail: "힙지로 특유의 감각을 담아낸 인테리어와 더불어, 마라의 알싸한 향이 살아있는 탄탄면과 바삭하고 쫀득한 꿔바로우, 대만식 우육면을 깔끔하고 스타일리시하게 즐길 수 있습니다.",
-                menu: "대만식 우육면, 유린기, 마파두부밥",
-                address: "서울 중구 을지로12길 11",
-                feature: "차이니즈 바 감성의 트렌디한 조명 / 이국적인 향신료의 조화",
-                image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5645, 126.9904],
-                emoji: "🥟"
-            },
-            {
-                id: 7,
-                name: "슬로미",
-                category: "카페/디저트",
-                region: "마포구 성산동",
-                gu: "마포구",
-                desc: "천천히 흘러가는 시간 속에서 따뜻한 차와 정성이 깃든 수제 구움과자를 즐기는 힐링 플레이스.",
-                detail: "유기농 밀가루와 고급 발효버터를 사용해 겉바속촉의 식감을 제대로 살려낸 마들렌과 휘낭시에가 시그니처입니다. 조용하게 사색하기 좋은 우드톤 레이아웃이 매력적입니다.",
-                menu: "수제 휘낭시에, 솔티 카라멜 마들렌, 필터 커피",
-                address: "서울 마포구 성미산로 11길 23",
-                feature: "천연 발효 버터 사용 / 사색과 여유를 선물하는 아기자기한 찻방",
-                image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5630, 126.9145],
-                emoji: "🍰"
-            },
-            {
-                id: 8,
-                name: "우동카덴",
-                category: "일식/우동",
-                region: "마포구 서교동",
-                gu: "마포구",
-                desc: "정호영 셰프가 선사하는 족타 방식의 쫄깃하고 탄력 넘치는 면발이 일품인 정통 사누키 우동전문점.",
-                detail: "발로 밟아 면을 치대는 정통 족타 기법을 활용해 차원이 다른 쫄깃함을 지닌 면발을 자부합니다. 가쓰오부시 본연의 진하고 깔끔한 육수를 우려낸 뜨거운 우동부터, 탱글함을 극대화한 냉우동(붓카케)까지 다채롭게 고를 수 있습니다.",
-                menu: "붓카케 우동, 에비텐 우동, 카레 우동",
-                address: "서울 마포구 양화로 7길 4-10",
-                feature: "미쉐린 가이드 빕구르망 선정 / 정통 족타 제면 방식",
-                image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5532, 126.9148],
-                emoji: "🥢"
-            },
-            {
-                id: 9,
-                name: "우동가조쿠",
-                category: "일식/우동",
-                region: "성동구 한양대",
-                gu: "성동구",
-                desc: "매일 직접 뽑아내는 제면소의 싱싱한 면발로 한양대 앞 골목을 주름잡은 가성비 극상의 생면 우동집.",
-                detail: "가와카미 셰프의 비법으로 자가제면을 실시하며, 천연 재료로 우려낸 감칠맛 가득한 쯔유 국물이 고소하고 담백하게 입에 착 감깁니다. 갓 튀겨 올린 새우튀김과 붓카케 우동의 조합이 인기가 가장 좋습니다.",
-                menu: "가조쿠 우동, 붓카케 우동, 돈카츠 정식",
-                address: "서울 성동구 마조로 9",
-                feature: "생활의 달인 우동 편 출연 / 부담 없는 착한 가격의 수제 생면",
-                image: "https://images.unsplash.com/photo-1618413504373-cf6776118d36?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5612, 127.0418],
-                emoji: "🍤"
-            },
-            {
-                id: 10,
-                name: "도우룸",
-                category: "양식/파스타",
-                region: "서초구 서래마을",
-                gu: "서초구",
-                desc: "입 안에서 터지는 다채로운 식감의 수제 생면 파스타를 고급스럽게 제안하는 이탈리안 비스트로.",
-                detail: "매장 내 오픈 키친 생면 제면소에서 그날 생산하는 카펠리니, 카바텔리, 가르가넬리 등 생면의 다채로운 질감을 경험할 수 있습니다. 마늘 버터 소스로 맛을 낸 먹물 카펠리니는 이곳의 부동의 대표작입니다.",
-                menu: "먹물 카펠리니, 도우룸 생면 파스타 코스",
-                address: "서울 서초구 동광로 99 2층",
-                feature: "미쉐린 가이드 가이드 등재 / 맞춤형 생면 셀렉션 다이닝",
-                image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80",
-                coords: [37.4936, 126.9984],
-                emoji: "🍝"
-            },
-            {
-                id: 11,
-                name: "형제상회",
-                category: "일식/수산물",
-                region: "동작구 노량진",
-                gu: "동작구",
-                desc: "노량진 수산시장에서 가장 트렌디하고 정직하게 두툼한 수제 모둠 숙성회를 썰어내는 명품 횟집.",
-                detail: "전통 어시장의 투박함을 벗어나 키오스크 시스템과 일정한 품질 관리로 두툼하고 일정한 품질의 고급 모둠회를 제안합니다. 제철 횟감을 인원과 금액대별로 알차게 배치하여 신뢰도가 매우 높습니다.",
-                menu: "형제 모둠회 (인원별 선택), 계절 고급 모둠회",
-                address: "서울 동작구 노들로 674 노량진수산시장 1층 북3문",
-                feature: "수산시장 현대화의 선두주자 / 24시간 철저한 온도 관리 숙성회",
-                image: "https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fit=crop&w=600&q=80",
-                coords: [37.5168, 126.9385],
-                emoji: "🐟"
-            }
+            { id: 1, name: "카와카츠", category: "일식", region: "마포구 합정", gu: "마포구", desc: "열흘간 진공 저온 숙성한 국내산 돈육을 파동 오븐에 튀겨 극상의 부드러움을 선사하는 프리미엄 돈카츠 전문점.", detail: "국내 카츠 마니아들 사이에서 최정상급으로 꼽히는 곳입니다. 육즙 가득한 로스카츠와 입안에서 살살 녹는 히레카츠가 명물이며, 특제 로즈마리 올리브유와 허브 솔트를 곁들여 고기 본연의 풍미를 만끽할 수 있습니다.", menu: "특로스카츠, 히레카츠, 로스카츠", address: "서울 마포구 동교로 58", feature: "오토클레이브 저온 조리 기법 / 올리브유 드롭", image: "https://images.unsplash.com/photo-1591814468924-caf88d1232e1?auto=format&fit=crop&w=600&q=80", coords: [37.5517, 126.9114], emoji: "🥩" },
+            { id: 2, name: "옥돌현옥", category: "한식", region: "은평구 역촌", gu: "은평구", desc: "맑고 은은하면서도 묵직하게 다가오는 육수와 메밀향 가득한 면발이 조화로운 이북 음식 전문점.", detail: "평양냉면 초심자부터 매니아까지 모두를 아우르는 육수의 감칠맛이 특징입니다. 냉면 외에도 부드럽게 삶아낸 어복쟁반과 촉촉한 제육, 평양식 만두가 아주 훌륭한 앙상블을 이룹니다.", menu: "평양냉면, 어복쟁반, 녹두지짐이", address: "서울 은평구 역말로 83", feature: "메밀 함량이 높은 맷돌 면발 / 정갈하고 담백한 육수", image: "https://images.unsplash.com/photo-1617093727343-374698b1b08d?auto=format&fit=crop&w=600&q=80", coords: [37.6048, 126.9152], emoji: "🍜" },
+            { id: 3, name: "도이칠란드박", category: "양식", region: "성북구 안암", gu: "성북구", desc: "수제 잠봉뵈르와 정통 도이치 킬바사 소시지를 아늑하고 캐주얼한 분위기에서 즐기는 소시지 전문점.", detail: "직접 염장하고 훈제한 육가공품을 선보이는 수제 샤퀴테리 숍입니다. 바삭한 바게트 속에 두툼하게 채워진 풍성한 잠봉뵈르 샌드위치와 육즙이 톡 터지는 그릴드 소시지가 인상적인 맥주 도둑입니다.", menu: "잠봉뵈르 샌드위치, 독일식 킬바사, 수제 맥주", address: "서울 성북구 안암로 9가길 66", feature: "정통 독일식 훈연 가공 방식 / 대학가 속 세련된 샤퀴테리 공방", image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80", coords: [37.5857, 127.0223], emoji: "🌭" },
+            { id: 4, name: "우래옥", category: "한식", region: "중구 주교동", gu: "중구", desc: "1946년 개업 이래 서울 평양냉면의 역사를 쓰고 있는, 한우로 우려낸 가장 깊고 진한 육수의 평냉 노포.", detail: "동치미 국물을 섞지 않고 순수 한우 육수로만 맛을 내어 묵직하고 육향 가득한 국물 맛을 자랑합니다. 잘 갈아 만든 순면 메밀국수와 함께 최고의 마블링을 자랑하는 전통 한우 불고기도 명물입니다.", menu: "평양냉면, 한우 불고기, 갈비", address: "서울 중구 창경궁로 62-29", feature: "서울 미래유산 지정 노포 / 100% 명품 육향 평양냉면", image: "https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?auto=format&fit=crop&w=600&q=80", coords: [37.5683, 126.9987], emoji: "🍲" },
+            { id: 5, name: "스시지현", category: "일식", region: "마포구 연남동", gu: "마포구", desc: "합리적인 가격대에 숙성 네타의 깊은 감칠맛을 느낄 수 있는 캐주얼 판초밥의 강자.", detail: "입안에서 사르르 풀어지는 정교한 샤리(밥)와 제철 생선들을 완벽하게 쥐어내는 가성비 최고의 스시 매장입니다. 모둠초밥 세트에 나오는 계란찜부터 후식까지 디테일한 정성이 가득 묻어납니다.", menu: "모둠초밥 C세트, 모둠사시미", address: "서울 마포구 동교로 227-7", feature: "정성을 다한 숙성 회 공정 / 아담하고 따뜻한 원목 감성", image: "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=600&q=80", coords: [37.5615, 126.9249], emoji: "🍣" },
+            { id: 6, name: "구오 (을지로)", category: "중식", region: "중구 을지로", gu: "중구", desc: "감각적인 무드 속에 대만식, 사천식 중식을 힙하고 모던하게 재해석한 차이니스 플레이스.", detail: "힙지로 특유의 감각을 담아낸 인테리어와 더불어, 마라의 알싸한 향이 살아있는 탄탄면과 바삭하고 쫀득한 꿔바로우, 대만식 우육면을 깔끔하고 스타일리시하게 즐길 수 있습니다.", menu: "대만식 우육면, 유린기, 마파두부밥", address: "서울 중구 을지로12길 11", feature: "차이니즈 바 감성의 트렌디한 조명 / 이국적인 향신료의 조화", image: "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=80", coords: [37.5645, 126.9904], emoji: "🥟" },
+            { id: 7, name: "슬로미", category: "카페", region: "마포구 성산동", gu: "마포구", desc: "천천히 흘러가는 시간 속에서 따뜻한 차와 정성이 깃든 수제 구움과자를 즐기는 힐링 플레이스.", detail: "유기농 밀가루와 고급 발효버터를 사용해 겉바속촉의 식감을 제대로 살려낸 마들렌과 휘낭시에가 시그니처입니다. 조용하게 사색하기 좋은 우드톤 레이아웃이 매력적입니다.", menu: "수제 휘낭시에, 솔티 카라멜 마들렌, 필터 커피", address: "서울 마포구 성미산로 11길 23", feature: "천연 발효 버터 사용 / 사색과 여유를 선물하는 아기자기한 찻방", image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80", coords: [37.5630, 126.9145], emoji: "🍰" },
+            { id: 8, name: "우동카덴", category: "일식", region: "마포구 서교동", gu: "마포구", desc: "정호영 셰프가 선사하는 족타 방식의 쫄깃하고 탄력 넘치는 면발이 일품인 정통 사누키 우동전문점.", detail: "발로 밟아 면을 치대는 정통 족타 기법을 활용해 차원이 다른 쫄깃함을 지닌 면발을 자부합니다. 가쓰오부시 본연의 진하고 깔끔한 육수를 우려낸 뜨거운 우동부터, 탱글함을 극대화한 냉우동(붓카케)까지 다채롭게 고를 수 있습니다.", menu: "붓카케 우동, 에비텐 우동, 카레 우동", address: "서울 마포구 양화로 7길 4-10", feature: "미쉐린 가이드 빕구르망 선정 / 정통 족타 제면 방식", image: "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=600&q=80", coords: [37.5532, 126.9148], emoji: "🥢" },
+            { id: 9, name: "우동가조쿠", category: "일식", region: "성동구 한양대", gu: "성동구", desc: "매일 직접 뽑아내는 제면소의 싱싱한 면발로 한양대 앞 골목을 주름잡은 가성비 극상의 생면 우동집.", detail: "가와카미 셰프의 비법으로 자가제면을 실시하며, 천연 재료로 우려낸 감칠맛 가득한 쯔유 국물이 고소하고 담백하게 입에 착 감깁니다. 갓 튀겨 올린 새우튀김과 붓카케 우동의 조합이 인기가 가장 좋습니다.", menu: "가조쿠 우동, 붓카케 우동, 돈카츠 정식", address: "서울 성동구 마조로 9", feature: "생활의 달인 우동 편 출연 / 부담 없는 착한 가격의 수제 생면", image: "https://search.pstatic.net/common/?src=https%3A%2F%2Fldb-phinf.pstatic.net%2F20231203_87%2F1701596927164B2Osj_JPEG%2F%25BA%25D7%25B0%25A1%25C4%25C9%25BF%25EC%25B5%25BF.jpg", coords: [37.5612, 127.0418], emoji: "🍤" },
+            { id: 10, name: "도우룸", category: "양식", region: "서초구 서래마을", gu: "서초구", desc: "입 안에서 터지는 다채로운 식감의 수제 생면 파스타를 고급스럽게 제안하는 이탈리안 비스트로.", detail: "매장 내 오픈 키친 생면 제면소에서 그날 생산하는 카펠리니, 카바텔리, 가르가넬리 등 생면의 다채로운 질감을 경험할 수 있습니다. 마늘 버터 소스로 맛을 낸 먹물 카펠리니는 이곳의 부동의 대표작입니다.", menu: "먹물 카펠리니, 도우룸 생면 파스타 코스", address: "서울 서초구 동광로 99 2층", feature: "미쉐린 가이드 가이드 등재 / 맞춤형 생면 셀렉션 다이닝", image: "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=600&q=80", coords: [37.4936, 126.9984], emoji: "🍝" },
+            { id: 11, name: "형제상회", category: "일식", region: "동작구 노량진", gu: "동작구", desc: "노량진 수산시장에서 가장 트렌디하고 정직하게 두툼한 수제 모둠 숙성회를 썰어내는 명품 횟집.", detail: "전통 어시장의 투박함을 벗어나 키오스크 시스템과 일정한 품질 관리로 두툼하고 일정한 품질의 고급 모둠회를 제안합니다. 제철 횟감을 인원과 금액대별로 알차게 배치하여 신뢰도가 매우 높습니다.", menu: "형제 모둠회 (인원별 선택), 계절 고급 모둠회", address: "서울 동작구 노들로 674 노량진수산시장 1층 북3문", feature: "수산시장 현대화의 선두주자 / 24시간 철저한 온도 관리 숙성회", image: "https://images.unsplash.com/photo-1534482421-64566f976cfa?auto=format&fit=crop&w=600&q=80", coords: [37.5168, 126.9385], emoji: "🐟" }
+      
         ];
 
+        let currentMode = 'gu'; 
         const modal = document.getElementById('detail-modal');
         const modalClose = document.getElementById('modal-close');
+        let map; 
+        let lightTileLayer; 
+        let darkTileLayer; 
+        function changeMode() {
+        const selector = document.getElementById('mode-selector');
+        currentMode = selector.value;
         
-        let map; // Leaflet map instance
-        let lightTileLayer; // Light mode map layer
-        let darkTileLayer;  // Dark mode map layer
-
-        // 2. 지도 생성 및 데이터 마킹 초기화 (라이트/다크 타일 분리)
+        // 모드가 바뀔 때마다 다시 그리기
+        renderGourmetList(); 
+        }
         function initMap() {
-            // 서울 중심지 기준 설정 [위도, 경도], 줌 레벨 11
-            map = L.map('map', {
-                scrollWheelZoom: false // 스크롤 시 지도 확대 방지
-            }).setView([37.555, 126.975], 11);
+            map = L.map('map', { scrollWheelZoom: false }).setView([37.555, 126.975], 11);
+            lightTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>', subdomains: 'abcd', maxZoom: 20 });
+            darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>', subdomains: 'abcd', maxZoom: 20 });
 
-            // 카르토(CartoDB)의 라이트 타일과 다크 타일 준비
-            lightTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: 'abcd',
-                maxZoom: 20
-            });
+            if (document.body.classList.contains('dark-mode')) { darkTileLayer.addTo(map); } else { lightTileLayer.addTo(map); }
 
-            darkTileLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-                subdomains: 'abcd',
-                maxZoom: 20
-            });
-
-            // 초기 로드 시 다크모드 여부에 따라 지도 테마 레이어 자동 선택
-            if (document.body.classList.contains('dark-mode')) {
-                darkTileLayer.addTo(map);
-            } else {
-                lightTileLayer.addTo(map);
-            }
-
-            // 마커 배치
             gourmetData.forEach(item => {
-                const customIcon = L.divIcon({
-                    html: `<div class="custom-marker" style="width: 40px; height: 40px;">${item.emoji}</div>`,
-                    className: 'custom-div-icon',
-                    iconSize: [40, 40],
-                    iconAnchor: [20, 20]
-                });
-
+                const customIcon = L.divIcon({ html: `<div class="custom-marker" style="width: 40px; height: 40px;">${item.emoji}</div>`, className: 'custom-div-icon', iconSize: [40, 40], iconAnchor: [20, 20] });
                 const marker = L.marker(item.coords, { icon: customIcon }).addTo(map);
-
-                // 마커 클릭 시 요약 가이드 팝업
-                const popupContent = `
-                    <div style="text-align: center;">
-                        <h3>${item.name}</h3>
-                        <p>${item.region} • ${item.category}</p>
-                        <button class="popup-btn" onclick="triggerDetailFromMap(${item.id})">상세 정보 열기</button>
-                    </div>
-                `;
+                const popupContent = `<div style="text-align: center;"><h3>${item.name}</h3><p>${item.region} • ${item.category}</p><button class="popup-btn" onclick="triggerDetailFromMap(${item.id})">상세 정보 열기</button></div>`;
                 marker.bindPopup(popupContent, { offset: [0, -10] });
             });
         }
 
-        // 지도 팝업 내부의 상세 보기 버튼 이벤트 트리거 함수
-        window.triggerDetailFromMap = function(id) {
-            const item = gourmetData.find(d => d.id === id);
-            if (item) openDetail(item);
-        };
+        window.triggerDetailFromMap = function(id) { const item = gourmetData.find(d => d.id === id); if (item) openDetail(item); };
 
-        // 3. 구 별 맛집 그룹화 및 동적 렌더링 (아코디언 토글 및 더보기 구조 탑재)
-        function renderGroupedGourmet() {
+        function renderGourmetList() {
             const container = document.getElementById('grouped-gourmet-container');
-            container.innerHTML = ''; // 초기화
-
-            // 맛집 데이터를 구(gu) 별로 그룹화
-            const grouped = gourmetData.reduce((acc, current) => {
-                const key = current.gu;
-                if (!acc[key]) {
-                    acc[key] = [];
-                }
-                acc[key].push(current);
-                return acc;
+            container.innerHTML = ''; 
+            
+            const grouped = gourmetData.reduce((acc, current) => { 
+                const key = current[currentMode]; 
+                if (!acc[key]) { acc[key] = []; } 
+                acc[key].push(current); 
+                return acc; 
             }, {});
 
-            // 각 구별 섹션을 동적으로 생성
-            const sortedGus = Object.keys(grouped).sort();
+            Object.keys(grouped).forEach(key => {
+                const groupWrapper = document.createElement('div');
+                groupWrapper.className = 'gu-group-section';1
+                // HTML에서 찾기 쉽도록 고유 ID 부여
+                const safeId = key.replace(/[^a-zA-Z0-9]/g, '-');
+                groupWrapper.id = `section-${safeId}`;
 
-            sortedGus.forEach(guName => {
-                const restaurantsInGu = grouped[guName];
-                
-                // 구 그룹 감싸는 섹션 생성
-                const section = document.createElement('section');
-                section.classList.add('gu-group-section');
-                
-                // 스크롤 시 상단 헤더에 가려지지 않도록 ID와 오프셋 지정
-                section.id = `gu-${guName}`;
-                section.style.scrollMarginTop = "88px";
-
-                // 구 타이틀과 체브론 화살표 아이콘 및 그리드 뼈대 구조화
-                section.innerHTML = `
-                    <div class="gu-group-title" onclick="toggleAccordion('${guName}')">
-                        📍 <span>${guName}</span>
-                        <span class="gu-badge">${restaurantsInGu.length}곳</span>
-                        <!-- 애플 감성의 심플한 화살표 SVG -->
-                        <svg class="chevron-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="18 15 12 9 6 15"></polyline>
-                        </svg>
+                groupWrapper.innerHTML = `
+                    <div class="gu-group-title">
+                        ${key} <span class="gu-badge">${grouped[key].length}</span>
+                        <div class="chevron-icon">▼</div>
                     </div>
                     <div class="grid-container"></div>
+                    ${grouped[key].length > 2 ? `
+                        <div class="more-btn-container">
+                            <button class="more-view-btn" onclick="toggleMoreView('${safeId}', ${grouped[key].length})">
+                                <span>남은 ${grouped[key].length - 2}곳 더보기</span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>
+                            </button>
+                        </div>
+                    ` : ''}
                 `;
 
-                const grid = section.querySelector('.grid-container');
-
-                // 그룹 내 식당 카드 추가 및 더보기 속성 마킹 (2개 초과 시 more-hidden 처리)
-                restaurantsInGu.forEach((item, index) => {
+                const grid = groupWrapper.querySelector('.grid-container');
+                
+                grouped[key].forEach((item, index) => {
                     const card = document.createElement('div');
-                    card.classList.add('card');
+                    card.className = 'card';
                     
-                    // 2곳이 넘어가는 리스트는 초기에 'more-hidden' 클래스를 매핑하여 숨깁니다.
+                    // 2개 초과인 경우 숨김 클래스 추가
                     if (index >= 2) {
                         card.classList.add('more-hidden');
+                    } else {
+                        card.classList.add('visible');
                     }
 
                     card.innerHTML = `
-                        <div class="card-img-box">
-                            <img src="${item.image}" alt="${item.name}">
-                        </div>
+                        <div class="card-img-box"><img src="${item.image}" alt="${item.name}"></div>
                         <div class="card-info">
-                            <div class="card-tags">
-                                <span class="card-tag">${item.category}</span>
-                                <span class="card-tag secondary">${item.region}</span>
-                            </div>
+                            <div class="card-tags"><span class="card-tag">${item.category}</span></div>
                             <h3 class="card-title">${item.name}</h3>
                             <p class="card-desc">${item.desc}</p>
                         </div>
                     `;
-
-                    // 클릭 시 상세 바텀 모달 표출 및 지도 센터 이동 연동
-                    card.addEventListener('click', () => {
-                        openDetail(item);
-                        map.setView(item.coords, 14, { animate: true });
-                    });
-
+                    card.onclick = () => openModal(item);
                     grid.appendChild(card);
                 });
 
-                // 해당 구의 맛집이 2곳을 초과할 경우 더보기 인터랙션 패널 주입
-                if (restaurantsInGu.length > 2) {
-                    const moreBtnContainer = document.createElement('div');
-                    moreBtnContainer.classList.add('more-btn-container');
-                    moreBtnContainer.innerHTML = `
-                        <button class="more-view-btn" onclick="toggleMoreView('${guName}', ${restaurantsInGu.length})">
-                            <span>남은 ${restaurantsInGu.length - 2}곳 더보기</span>
-                            <svg viewBox="0 0 24 24" width="16" height="18" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="6 9 12 15 18 9"></polyline>
-                            </svg>
-                        </button>
-                    `;
-                    section.appendChild(moreBtnContainer);
-                }
+                // 아코디언 접기/펼치기 이벤트 추가
+                // groupWrapper.querySelector('.gu-group-title').onclick = (e) => {
+                //     if (e.target.closest('.more-view-btn')) return;
+                //     groupWrapper.classList.toggle('collapsed');
+                // };
 
-                container.appendChild(section);
+                // // renderGourmetList 함수 내부에서 그룹을 생성하는 부분
+                groupWrapper.querySelector('.gu-group-title').onclick = (e) => {
+                    // 1. "더보기" 버튼을 누른 경우는 스크롤 하지 않도록 방지
+                    if (e.target.closest('.more-view-btn')) return;
+
+                    // 2. 아코디언 토글
+                    groupWrapper.classList.toggle('collapsed');
+
+                    // 3. 클릭 시 해당 섹션으로 부드럽게 이동
+                    // 'start' 옵션을 주면 화면 최상단으로 정렬됩니다.
+                    groupWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                };
+                container.appendChild(groupWrapper);
             });
         }
+        function renderSideMenu() {
+            const menuContainer = document.getElementById('side-menu-container'); // 우측 상단 컨테이너
+            menuContainer.innerHTML = '<h3>맛집 목록</h3>';
 
-        // --- 아코디언 접기 / 펴기 핵심 JS 함수 ---
-        function toggleAccordion(guName) {
-            const section = document.getElementById(`gu-${guName}`);
-            if (section) {
-                section.classList.toggle('collapsed');
-            }
+            // 현재 그룹핑된 키(구 이름 또는 카테고리 이름)를 가져옴
+            const keys = Object.keys(groupedData); // renderGourmetList에서 grouped를 전역으로 빼거나 재계산해야 함
+
+            keys.forEach(key => {
+                const safeId = key.replace(/[^a-zA-Z0-9]/g, '-');
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.innerText = key;
+                
+                // 클릭 시 해당 섹션으로 스크롤 이동
+                menuItem.onclick = () => {
+                    const target = document.getElementById(`section-${safeId}`);
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                };
+                menuContainer.appendChild(menuItem);
+            });
         }
+        document.getElementById('toggle-mode-btn').addEventListener('click', () => {
+            currentMode = (currentMode === 'gu') ? 'category' : 'gu';
+            document.getElementById('mode-label').innerText = (currentMode === 'gu') ? '지역별' : '카테고리별';
+            
+            // 섹션 타이틀 변경 (이전 질문 답변 참고)
+            document.getElementById('section-title').innerText = (currentMode === 'gu') ? '구 별로 모아보기' : '카테고리 별로 모아보기';
 
-        // --- 더보기 / 접기 토글 핵심 JS 기능 ---
-        function toggleMoreView(guName, totalCount) {
-            const section = document.getElementById(`gu-${guName}`);
+            renderGourmetList();     // 목록 다시 그리기
+            renderDropdownMenu();    // [중요] 드롭다운 메뉴도 업데이트
+            initScrollTrigger(); 
+        });
+
+        function toggleAccordion(id) { const section = document.getElementById(id); if (section) { section.classList.toggle('collapsed'); } }
+
+        function toggleMoreView(safeId, totalCount) {
+            const section = document.getElementById(`section-${safeId}`);
             if (!section) return;
 
-            const hiddenCards = section.querySelectorAll('.card.more-hidden, .card.more-visible');
-            const moreBtn = section.querySelector('.more-view-btn');
-            const moreBtnText = moreBtn.querySelector('span');
-            const moreBtnIcon = moreBtn.querySelector('svg');
+            const cards = section.querySelectorAll('.card');
+            const btn = section.querySelector('.more-view-btn');
+            const isExpanded = btn.classList.contains('expanded');
 
-            // 현재 펼쳐져 있는 상태인지 검사
-            const isExpanded = moreBtn.classList.contains('expanded');
+            cards.forEach((card, index) => {
+                if (index >= 2) {
+                    card.classList.toggle('more-hidden', isExpanded);
+                    card.classList.toggle('visible', !isExpanded);
+                }
+            });
 
-            if (!isExpanded) {
-                // 펼쳐지지 않은 상태 -> 펼침 진행
-                hiddenCards.forEach(card => {
-                    card.style.display = 'block';
-                    // 애니메이션 트랜지션을 위해 시간차를 살짝 두고 visible 처리
-                    setTimeout(() => {
-                        card.classList.remove('more-hidden');
-                        card.classList.add('more-visible', 'visible');
-                    }, 50);
-                });
-                moreBtn.classList.add('expanded');
-                moreBtnText.innerText = "간단히 접기";
-                moreBtnIcon.style.transform = "rotate(-180deg)";
-            } else {
-                // 이미 펼쳐진 상태 -> 다시 접음
-                hiddenCards.forEach(card => {
-                    card.classList.remove('more-visible');
-                    card.classList.add('more-hidden');
-                    card.style.display = 'none';
-                });
-                moreBtn.classList.remove('expanded');
-                moreBtnText.innerText = `남은 ${totalCount - 2}곳 더보기`;
-                moreBtnIcon.style.transform = "rotate(0deg)";
-                
-                // 접었을 때 타이틀 위로 스크롤을 올려 시야가 튕기지 않도록 함
-                section.scrollIntoView({ behavior: 'smooth' });
-            }
+            btn.classList.toggle('expanded');
+            btn.querySelector('span').innerText = isExpanded ? `남은 ${totalCount - 2}곳 더보기` : "간단히 접기";
+            btn.querySelector('svg').style.transform = isExpanded ? "rotate(0deg)" : "rotate(-180deg)";
         }
 
-        // 4. 네비게이션 헤더 '맛집 목록' 드롭다운 목록 동적 구축
         function renderDropdownMenu() {
-            const dropdown = document.getElementById('gu-dropdown');
-            dropdown.innerHTML = ''; // 초기화
+        const dropdown = document.querySelector('#gu-dropdown .dropdown-inner');
+        dropdown.innerHTML = ''; 
 
-            // 데이터베이스에서 고유한 구 이름들을 추출 후 정렬
-            const uniqueGus = [...new Set(gourmetData.map(item => item.gu))].sort();
+        // 모드에 따라 데이터 소스 선택
+        let items;
+        if (currentMode === 'gu') {
+            items = [...new Set(gourmetData.map(item => item.gu))].sort();
+        } else {
+            items = ["한식", "중식", "일식", "양식", "카페"];
+        }
 
-            uniqueGus.forEach(guName => {
-                const link = document.createElement('a');
-                link.href = `#gu-${guName}`;
-                link.innerText = guName;
+        items.forEach(itemName => {
+            const link = document.createElement('a');
+            
+            // 1. ID 생성 규칙을 renderGourmetList와 동일하게 맞춤
+            const idPrefix = (currentMode === 'gu') ? 'gu' : 'cat';
+            const safeName = itemName.replace(/[^a-zA-Z0-9]/g, '-');
+            const targetId = `${idPrefix}-${safeName}`;
+            
+            link.href = `#${targetId}`;
+            link.innerText = itemName;
+            
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetSection = document.getElementById(targetId);
                 
-                // UX 최적화: 드롭다운 클릭 시 해당 구를 자동으로 펼치고(Expand) + 더보기 내역도 모두 한 번에 열어줍니다.
-                link.addEventListener('click', (e) => {
-                    e.preventDefault(); // 기본 앵커 이동 차단
+                if (targetSection) {
+                    // 섹션 펼치기
+                    targetSection.classList.remove('collapsed');
                     
-                    const targetSection = document.getElementById(`gu-${guName}`);
-                    if (targetSection) {
-                        // 1) 구 섹션 아코디언 열기
-                        targetSection.classList.remove('collapsed');
-                        
-                        // 2) 숨겨져 있던 더보기 카드들 자동 활성화
-                        const hiddenCards = targetSection.querySelectorAll('.card.more-hidden');
-                        const moreBtn = targetSection.querySelector('.more-view-btn');
-                        
-                        if (hiddenCards.length > 0 && moreBtn) {
-                            hiddenCards.forEach(card => {
-                                card.style.display = 'block';
-                                card.classList.remove('more-hidden');
-                                card.classList.add('more-visible', 'visible');
-                            });
-                            moreBtn.classList.add('expanded');
-                            moreBtn.querySelector('span').innerText = "간단히 접기";
-                            moreBtn.querySelector('svg').style.transform = "rotate(-180deg)";
-                        }
-                        
-                        // 3) 자연스러운 스크롤 위치 이동
-                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    // 더보기 버튼이 있다면 자동으로 펼침
+                    const hiddenCards = targetSection.querySelectorAll('.card.more-hidden');
+                    const moreBtn = targetSection.querySelector('.more-view-btn');
+                    
+                    if (hiddenCards.length > 0 && moreBtn) {
+                        hiddenCards.forEach(card => { 
+                            card.style.display = 'block'; 
+                            card.classList.remove('more-hidden'); 
+                            card.classList.add('more-visible', 'visible'); 
+                        });
+                        moreBtn.classList.add('expanded');
+                        moreBtn.querySelector('span').innerText = "간단히 접기";
+                        moreBtn.querySelector('svg').style.transform = "rotate(-180deg)";
                     }
                     
-                    // 터치/클릭 시 드롭다운 닫힘 보완을 위해 블러 처리
-                    document.activeElement.blur();
-                });
-
-                dropdown.appendChild(link);
+                    targetSection.scrollIntoView({ behavior: 'smooth' });
+                }
+                document.activeElement.blur();
             });
-        }
+            dropdown.appendChild(link);
+        });
+    }
 
-        // 5. 모달 레이어 데이터 투입 및 연출
         function openDetail(data) {
-            // 태그 동적 구성
             const tagsContainer = document.getElementById('modal-tags');
-            tagsContainer.innerHTML = `
-                <span class="card-tag">${data.category}</span>
-                <span class="card-tag secondary">${data.region}</span>
-            `;
-
+            tagsContainer.innerHTML = `<span class="card-tag">${data.category}</span><span class="card-tag secondary">${data.region}</span>`;
             document.getElementById('modal-title').innerText = data.name;
             document.getElementById('modal-description').innerText = data.detail;
             document.getElementById('modal-menu').innerText = data.menu;
             document.getElementById('modal-address').innerText = data.address;
             document.getElementById('modal-feature').innerText = data.feature;
-            
-            // 네이버 지도 동적 검색 연동 URL 생성 (안전한 브라우징 인코딩 적용)
             const mapLink = document.getElementById('naver-map-link');
-            const searchKeyword = `${data.name} ${data.region}`;
-            mapLink.href = `https://map.naver.com/v5/search/${encodeURIComponent(searchKeyword)}`;
-
-            // 주소 복사 세팅
+            mapLink.href = `https://map.naver.com/v5/search/${encodeURIComponent(`${data.name} ${data.region}`)}`;
             document.getElementById('map-target').innerText = "도로명 주소 복사하기";
             document.getElementById('map-sub').innerText = `${data.address} (클릭 시 클립보드에 복사)`;
-
-            // 주소 복사 액션 바인딩
             const mapContainer = document.getElementById('modal-map');
-            // 이전 리스너 누적 제거용 클론 기법 적용
             const newMapContainer = mapContainer.cloneNode(true);
             mapContainer.parentNode.replaceChild(newMapContainer, mapContainer);
-
-            newMapContainer.addEventListener('click', () => {
-                copyToClipboard(data.address);
-                showCopyIndicator(newMapContainer);
-            });
-
+            newMapContainer.addEventListener('click', () => { copyToClipboard(data.address); showCopyIndicator(newMapContainer); });
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden'; // 뒷배경 스크롤 고정
+            document.body.style.overflow = 'hidden'; 
         }
 
-        // 클립보드 복사 유틸리티
-        function copyToClipboard(text) {
-            const tempElem = document.createElement('textarea');
-            tempElem.value = text;
-            document.body.appendChild(tempElem);
-            tempElem.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempElem);
-        }
+        function copyToClipboard(text) { const tempElem = document.createElement('textarea'); tempElem.value = text; document.body.appendChild(tempElem); tempElem.select(); document.execCommand('copy'); document.body.removeChild(tempElem); }
 
-        // 알림 레이어 연출
         function showCopyIndicator(elem) {
             const originalIcon = elem.querySelector('.map-icon').innerText;
             const originalTitle = elem.querySelector('.map-title').innerText;
             const originalSub = elem.querySelector('.map-sub').innerText;
-
             elem.querySelector('.map-icon').innerText = "✅";
             elem.querySelector('.map-title').innerText = "주소가 복사되었습니다!";
             elem.querySelector('.map-sub').innerText = "지도 앱이나 내비게이션에 붙여넣어 쉽게 검색하세요.";
-
-            setTimeout(() => {
-                elem.querySelector('.map-icon').innerText = originalIcon;
-                elem.querySelector('.map-title').innerText = originalTitle;
-                elem.querySelector('.map-sub').innerText = originalSub;
-            }, 2000);
+            setTimeout(() => { elem.querySelector('.map-icon').innerText = originalIcon; elem.querySelector('.map-title').innerText = originalTitle; elem.querySelector('.map-sub').innerText = originalSub; }, 2000);
         }
 
-        // 모달 닫기
-        function closeModal() {
-            modal.classList.remove('active');
-            document.body.style.overflow = ''; // 스크롤 활성화
-        }
-
+        function closeModal() { modal.classList.remove('active'); document.body.style.overflow = ''; }
         modalClose.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
-        });
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
-        // 6. 스크롤 인터랙션 트리거 (Intersection Observer)
         function initScrollTrigger() {
             const cards = document.querySelectorAll('.card');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target); // 최초 노출 이후 해제
-                    }
-                });
-            }, { 
-                threshold: 0.1,
-                rootMargin: "0px 0px -50px 0px" // 여유 공간 설정
-            });
-
+            const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
             cards.forEach(card => observer.observe(card));
         }
 
-        // --- 7. 다크모드 관리 시스템 ---
         const themeBtn = document.getElementById('theme-toggle');
+        const sunIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3zm0-10c.28 0 .5-.22.5-.5V3c0-.28-.22-.5-.5-.5s-.5.22-.5.5v1.5c0 .28.22.5.5.5zm0 14c-.28 0-.5.22-.5.5V21c0 .28.22.5.5.5s.5-.22.5-.5v-1.5c0-.28-.22-.5-.5-.5zm7.07-12.07c.1-.1.1-.26 0-.36l-1.06-1.06c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06zm-11.31 11.3c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06zM19.5 12c0-.28-.22-.5-.5-.5H17.5c-.28 0-.5.22-.5.5s.22.5.5.5H19c.28 0 .5-.22.5-.5zm-14.5 0c0 .28.22.5.5.5H7c.28 0 .5-.22.5-.5s-.22-.5-.5-.5H5.5c-.28 0-.5.22-.5.5zm13.12 4.93c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06zm-11.31-11.3c.1.1.26.1.36 0l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06z"/></svg>`;
+        const moonIcon = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.3 22h-.1c-5.5 0-10-4.5-10-10 0-4.8 3.5-8.9 8.2-9.8.5-.1 1 .3.9.8-.1.4-.4.8-.4 1.3 0 4.4 3.6 8 8 8 .4 0 .9-.1 1.3-.3.5-.2 1 .2.9.8-.9 4.7-5 8.2-9.8 8.2zm-6.2-10c0 3.3 2.7 6 6 6 2.4 0 4.5-1.4 5.4-3.5-.8.3-1.6.5-2.5.5-5.5 0-10-4.5-10-10 0-.9.1-1.7.4-2.5-2.1.9-3.5 3-3.5 5.5z"/></svg>`;
 
-        // 해/달 아이콘 렌더링 템플릿
-        const sunIcon = `
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3zm0-10c.28 0 .5-.22.5-.5V3c0-.28-.22-.5-.5-.5s-.5.22-.5.5v1.5c0 .28.22.5.5.5zm0 14c-.28 0-.5.22-.5.5V21c0 .28.22.5.5.5s.5-.22.5-.5v-1.5c0-.28-.22-.5-.5-.5zm7.07-12.07c.1-.1.1-.26 0-.36l-1.06-1.06c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06zm-11.31 11.3c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06zM19.5 12c0-.28-.22-.5-.5-.5H17.5c-.28 0-.5.22-.5.5s.22.5.5.5H19c.28 0 .5-.22.5-.5zm-14.5 0c0 .28.22.5.5.5H7c.28 0 .5-.22.5-.5s-.22-.5-.5-.5H5.5c-.28 0-.5.22-.5.5zm13.12 4.93c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06c.05.05.12.07.18.07s.13-.02.18-.07l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06zm-11.31-11.3c.1.1.26.1.36 0l1.06-1.06c.1-.1.1-.26 0-.36l-1.06-1.06c-.1-.1-.26-.1-.36 0l-1.06 1.06c-.1.1-.1.26 0 .36l1.06 1.06z"/>
-            </svg>
-        `;
-
-        const moonIcon = `
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12.3 22h-.1c-5.5 0-10-4.5-10-10 0-4.8 3.5-8.9 8.2-9.8.5-.1 1 .3.9.8-.1.4-.4.8-.4 1.3 0 4.4 3.6 8 8 8 .4 0 .9-.1 1.3-.3.5-.2 1 .2.9.8-.9 4.7-5 8.2-9.8 8.2zm-6.2-10c0 3.3 2.7 6 6 6 2.4 0 4.5-1.4 5.4-3.5-.8.3-1.6.5-2.5.5-5.5 0-10-4.5-10-10 0-.9.1-1.7.4-2.5-2.1.9-3.5 3-3.5 5.5z"/>
-            </svg>
-        `;
-
-        // 테마 상태 갱신 함수 (버튼 아이콘 및 지도 스타일 자동 매핑)
         function updateTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add('dark-mode');
-                themeBtn.innerHTML = sunIcon; // 다크 모드일 때는 라이트 모드로 갈 수 있게 '해' 표출
-                if (map && lightTileLayer && darkTileLayer) {
-                    map.removeLayer(lightTileLayer);
-                    darkTileLayer.addTo(map);
-                }
-            } else {
-                document.body.classList.remove('dark-mode');
-                themeBtn.innerHTML = moonIcon; // 라이트 모드일 때는 다크 모드로 갈 수 있게 '달' 표출
-                if (map && lightTileLayer && darkTileLayer) {
-                    map.removeLayer(darkTileLayer);
-                    lightTileLayer.addTo(map);
-                }
-            }
+            if (isDark) { document.body.classList.add('dark-mode'); themeBtn.innerHTML = sunIcon; if (map && lightTileLayer && darkTileLayer) { map.removeLayer(lightTileLayer); darkTileLayer.addTo(map); } }
+            else { document.body.classList.remove('dark-mode'); themeBtn.innerHTML = moonIcon; if (map && lightTileLayer && darkTileLayer) { map.removeLayer(darkTileLayer); lightTileLayer.addTo(map); } }
         }
 
-        // 시스템 테마 및 로컬스토리지 선호 테마 수집
         const savedTheme = localStorage.getItem('theme');
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         let isDarkMode = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
-
-        // 첫 로딩 테마 반영
         updateTheme(isDarkMode);
+        themeBtn.addEventListener('click', () => { isDarkMode = !isDarkMode; localStorage.setItem('theme', isDarkMode ? 'dark' : 'light'); updateTheme(isDarkMode); });
 
-        // 클릭 이벤트 리스너 바인딩
-        themeBtn.addEventListener('click', () => {
-            isDarkMode = !isDarkMode;
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            updateTheme(isDarkMode);
-        });
-
-        // --- 8. 스크롤 진행 바 애니메이션 이벤트 핸들러 ---
         function handleScrollProgress() {
             const progressBar = document.getElementById('progress-bar');
-            
-            // 현재 스크롤된 높이 계산
             const scrollTop = window.scrollY || document.documentElement.scrollTop;
-            // 전체 문서의 실제 높이에서 뷰포트 창 크기를 뺌 (최대 스크롤 가능 범위)
             const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            
-            // 진행률 백분율(%) 계산
             const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-            
-            // 진행 바 가로 폭 반영
             progressBar.style.width = scrollPercent + '%';
         }
 
-        // --- 9. 한 글자씩 출력되는 타이핑 애니메이션 코어 로직 (신규 추가) ---
         function startTypingEffect() {
             const line1Text = "직접 가보고 선정한 나의 맛집";
             const line2Text = "여러분도 가보세요";
-            
             const line1El = document.getElementById('line1');
             const line2El = document.getElementById('line2');
             const cursorEl = document.getElementById('typing-cursor');
             const subtitleEl = document.querySelector('.hero-content p');
-            
-            let i = 0;
-            let j = 0;
-            const typingSpeed = 90; // 한 글자 출력 속도 (밀리초 단위)
+            let i = 0, j = 0;
+            const typingSpeed = 90;
 
-            // 첫 번째 줄 타이핑 시작
-            function typeLine1() {
-                if (i < line1Text.length) {
-                    line1El.textContent += line1Text.charAt(i);
-                    i++;
-                    setTimeout(typeLine1, typingSpeed);
-                } else {
-                    // 첫 번째 줄 타이핑 완료 후 약간의 휴지기를 거치고 두 번째 줄 시작
-                    setTimeout(typeLine2, 250);
-                }
+            function typeLine1() { if (i < line1Text.length) { line1El.textContent += line1Text.charAt(i); i++; setTimeout(typeLine1, typingSpeed); } else { setTimeout(typeLine2, 250); } }
+            function typeLine2() { 
+                if (j < line2Text.length) { line2El.textContent += line2Text.charAt(j); j++; setTimeout(typeLine2, typingSpeed); } else { 
+                    setTimeout(() => { cursorEl.style.opacity = '0'; setTimeout(() => { cursorEl.style.display = 'none'; }, 300); }, 1200);
+                    setTimeout(() => { subtitleEl.classList.add('visible'); }, 350);
+                } 
             }
-
-            // 두 번째 줄 타이핑 시작
-            function typeLine2() {
-                if (j < line2Text.length) {
-                    line2El.textContent += line2Text.charAt(j);
-                    j++;
-                    setTimeout(typeLine2, typingSpeed);
-                } else {
-                    // 타이핑이 모두 끝나면 깜빡이던 세로선 커서를 자연스럽게 페이드아웃
-                    setTimeout(() => {
-                        cursorEl.style.opacity = '0';
-                        setTimeout(() => {
-                            cursorEl.style.display = 'none';
-                        }, 300);
-                    }, 1200);
-
-                    // 설명글(p 태그) 서서히 나타나도록 클래스 매핑
-                    setTimeout(() => {
-                        subtitleEl.classList.add('visible');
-                    }, 350);
-                }
-            }
-
             typeLine1();
         }
 
-        // 최초 런타임 시작
         window.onload = function() {
             initMap();
-            // 지도가 그려진 이후에도 테마가 완전하게 한 번 더 매핑되도록 확실한 정비
             updateTheme(isDarkMode);
-            renderGroupedGourmet();
+            renderGourmetList(); // Updated from renderGroupedGourmet
             renderDropdownMenu();
             initScrollTrigger();
-            
-            // 타이핑 액션 트리거 호출
             startTypingEffect();
-            
-            // 스크롤 이벤트 바인딩
             window.addEventListener('scroll', handleScrollProgress);
-            // 초기 페이지 진입 시 한 번 동작해 위치 보정
             handleScrollProgress();
         }
     </script>
